@@ -17,49 +17,75 @@ namespace memdb {
         ColumnAttributes attributes;
         ColumnInterface(std::string &);
         ColumnInterface(std::string &, ColumnAttributes &);
+        int number;
     private:
         virtual void foo() = 0;
     };
 
     template <typename T>
     struct Column : public ColumnInterface {
+        Column(std::string &&, int len);
+        Column(std::string &&, T &&, int len);
+        Column(std::string &&, ColumnAttributes &&attr, T &&, int len);
+        Column(std::string &&, ColumnAttributes &&, int len);
+        std::vector<T> vector;
         T value;
-        Column(std::string &&);
-        Column(std::string &&, T &&);
-        Column(std::string &&, ColumnAttributes &&attr, T &&);
-        Column(std::string &&, ColumnAttributes &&);
     private:
         void foo() override {};
+        bool hasDefoltValue = false;
+        int len; // for strings and bytes
     };
 
-    template<typename... Types>
-    class Line {
-        std::tuple<Types...> values;
+
+    template<int ArgumentsCount, typename... Types>
+    struct Line {
+        Line(bool, std::tuple<std::pair<std::string, Types>...> &);
+        std::tuple<std::pair<std::string, Types>...> values;
+        bool hasNames = false;
+        int count = ArgumentsCount;
     };
 
-    class TableBase {
-        virtual std::type_info getType() const = 0;
-    };
-
-    template<typename... Types>
-    class Table : public TableBase{
-        std::vector<std::shared_ptr<ColumnInterface>> columns;
-        std::vector<std::type_info> types;
-        std::vector<Line<Types...>> lines;
+    class Table {
+        std::vector<Column<int32_t>> intColumns;
+        std::vector<Column<bool>> boolColumns;
+        std::vector<Column<std::string>> stringColumns;
+        std::vector<Column<std::vector<uint8_t>>> byteColumns;
+        int columnsCount = 0;
     public:
         std::string name;
-        void insert(Line<Types...> &&);
-        std::type_info getType() const override;
+
+        template<typename... Types>
+        Table(std::string &&s, std::tuple<Column<Types>...> &&columns);
+
+        template<int ArgumentsCount, typename... Types>
+        void insert(Line<ArgumentsCount, Types...> &&);
+
     };
 
 
     class Database {
-        std::vector<std::shared_ptr<TableBase>> tables;
-        std::vector<std::type_info> types;
+        std::vector<Table> tables;
+        std::vector<const std::type_info*> types;
 
     public:
-        void addNewTable(const std::shared_ptr<TableBase>&, const std::type_info);
-
+        void addNewTable(const std::shared_ptr<TableBase>&, const std::type_info *);
+        void insertToTable(std::string &values, std::string &name);
     };
 
+}
+
+class ExecutionException : std::exception
+{
+public:
+    ExecutionException(std::string &&whatStr) noexcept : whatStr(std::move(whatStr)) {}
+    ExecutionException(const std::string &whatStr) noexcept : whatStr(whatStr) {}
+    ~ExecutionException() noexcept;
+    const char* what() const noexcept override;
+private:
+    std::string whatStr;
+};
+
+const char* ExecutionException::what() const noexcept
+{
+    return whatStr.c_str();
 }
