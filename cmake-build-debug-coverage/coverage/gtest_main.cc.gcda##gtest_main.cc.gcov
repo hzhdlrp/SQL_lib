@@ -1,0 +1,75 @@
+        -:    0:Source:/Users/vadimleonov/Desktop/плюсы/SQL_lib/lib/googletest/googletest/src/gtest_main.cc
+        -:    0:Graph:/Users/vadimleonov/Desktop/плюсы/SQL_lib/cmake-build-debug-coverage/lib/googletest/googletest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.gcno
+        -:    0:Data:/Users/vadimleonov/Desktop/плюсы/SQL_lib/cmake-build-debug-coverage/lib/googletest/googletest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.gcda
+        -:    0:Runs:1
+        -:    1:// Copyright 2006, Google Inc.
+        -:    2:// All rights reserved.
+        -:    3://
+        -:    4:// Redistribution and use in source and binary forms, with or without
+        -:    5:// modification, are permitted provided that the following conditions are
+        -:    6:// met:
+        -:    7://
+        -:    8://     * Redistributions of source code must retain the above copyright
+        -:    9:// notice, this list of conditions and the following disclaimer.
+        -:   10://     * Redistributions in binary form must reproduce the above
+        -:   11:// copyright notice, this list of conditions and the following disclaimer
+        -:   12:// in the documentation and/or other materials provided with the
+        -:   13:// distribution.
+        -:   14://     * Neither the name of Google Inc. nor the names of its
+        -:   15:// contributors may be used to endorse or promote products derived from
+        -:   16:// this software without specific prior written permission.
+        -:   17://
+        -:   18:// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+        -:   19:// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+        -:   20:// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+        -:   21:// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+        -:   22:// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+        -:   23:// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+        -:   24:// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+        -:   25:// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+        -:   26:// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+        -:   27:// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+        -:   28:// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+        -:   29:
+        -:   30:#include <cstdio>
+        -:   31:
+        -:   32:#include "gtest/gtest.h"
+        -:   33:
+        -:   34:#if defined(GTEST_OS_ESP8266) || defined(GTEST_OS_ESP32) || \
+        -:   35:    (defined(GTEST_OS_NRF52) && defined(ARDUINO))
+        -:   36:// Arduino-like platforms: program entry points are setup/loop instead of main.
+        -:   37:
+        -:   38:#ifdef GTEST_OS_ESP8266
+        -:   39:extern "C" {
+        -:   40:#endif
+        -:   41:
+        -:   42:void setup() { testing::InitGoogleTest(); }
+        -:   43:
+        -:   44:void loop() { RUN_ALL_TESTS(); }
+        -:   45:
+        -:   46:#ifdef GTEST_OS_ESP8266
+        -:   47:}
+        -:   48:#endif
+        -:   49:
+        -:   50:#elif defined(GTEST_OS_QURT)
+        -:   51:// QuRT: program entry point is main, but argc/argv are unusable.
+        -:   52:
+        -:   53:GTEST_API_ int main() {
+        -:   54:  printf("Running main() from %s\n", __FILE__);
+        -:   55:  testing::InitGoogleTest();
+        -:   56:  return RUN_ALL_TESTS();
+        -:   57:}
+        -:   58:#else
+        -:   59:// Normal platforms: program entry point is main, argc/argv are initialized.
+        -:   60:
+function main called 1 returned 100% blocks executed 100%
+        1:   61:GTEST_API_ int main(int argc, char **argv) {
+        1:   62:  printf("Running main() from %s\n", __FILE__);
+        1:   62-block  0
+call    0 returned 1
+        1:   63:  testing::InitGoogleTest(&argc, argv);
+call    0 returned 1
+        1:   64:  return RUN_ALL_TESTS();
+call    0 returned 1
+        -:   65:}
+        -:   66:#endif

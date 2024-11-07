@@ -2,8 +2,11 @@
 #include "memdb.hpp"
 
 int main() {
-    A a;
+    memdb::Column<int32_t> c1("column1", 0, 0);
+    memdb::Column<std::string> c2("column2", "abcde", 5);
 
-    std::cout << a.foo() << std::endl;
+
+
+
     return 0;
 }

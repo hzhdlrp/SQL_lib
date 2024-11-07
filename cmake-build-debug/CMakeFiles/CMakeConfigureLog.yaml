@@ -518,3 +518,38 @@ events:
       
       
 ...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.26/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.26/Modules/CheckCSourceCompiles.cmake:76 (cmake_check_source_compiles)"
+      - "/Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.26/Modules/FindThreads.cmake:97 (CHECK_C_SOURCE_COMPILES)"
+      - "/Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.26/Modules/FindThreads.cmake:163 (_threads_check_libc)"
+      - "lib/googletest/googletest/cmake/internal_utils.cmake:66 (find_package)"
+      - "lib/googletest/googletest/CMakeLists.txt:83 (config_compiler_and_linker)"
+    checks:
+      - "Performing Test CMAKE_HAVE_LIBC_PTHREAD"
+    directories:
+      source: "/Users/vadimleonov/Desktop/\u043f\u043b\u044e\u0441\u044b/SQL_lib/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-1EqgXF"
+      binary: "/Users/vadimleonov/Desktop/\u043f\u043b\u044e\u0441\u044b/SQL_lib/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-1EqgXF"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: "/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk"
+    buildResult:
+      variable: "CMAKE_HAVE_LIBC_PTHREAD"
+      cached: true
+      stdout: |
+        Change Dir: /Users/vadimleonov/Desktop/плюсы/SQL_lib/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-1EqgXF
+        
+        Run Build Command(s):/Applications/CLion.app/Contents/bin/ninja/mac/ninja -v cmTC_38032 && [1/2] /opt/homebrew/bin/gcc-12 -DCMAKE_HAVE_LIBC_PTHREAD  -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -fdiagnostics-color=always -o CMakeFiles/cmTC_38032.dir/src.c.o -c '/Users/vadimleonov/Desktop/плюсы/SQL_lib/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-1EqgXF/src.c'
+        [2/2] : && /opt/homebrew/bin/gcc-12 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names  CMakeFiles/cmTC_38032.dir/src.c.o -o cmTC_38032   && :
+        
+      exitCode: 0
+...

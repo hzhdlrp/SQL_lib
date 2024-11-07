@@ -1,0 +1,962 @@
+        -:    0:Source:/opt/homebrew/Cellar/gcc@12/12.4.0/include/c++/12/bits/new_allocator.h
+        -:    0:Graph:/Users/vadimleonov/Desktop/плюсы/SQL_lib/cmake-build-debug-coverage/lib/CMakeFiles/tests.dir/tests.cpp.gcno
+        -:    0:Data:/Users/vadimleonov/Desktop/плюсы/SQL_lib/cmake-build-debug-coverage/lib/CMakeFiles/tests.dir/tests.cpp.gcda
+        -:    0:Runs:1
+        -:    1:// Allocator that wraps operator new -*- C++ -*-
+        -:    2:
+        -:    3:// Copyright (C) 2001-2022 Free Software Foundation, Inc.
+        -:    4://
+        -:    5:// This file is part of the GNU ISO C++ Library.  This library is free
+        -:    6:// software; you can redistribute it and/or modify it under the
+        -:    7:// terms of the GNU General Public License as published by the
+        -:    8:// Free Software Foundation; either version 3, or (at your option)
+        -:    9:// any later version.
+        -:   10:
+        -:   11:// This library is distributed in the hope that it will be useful,
+        -:   12:// but WITHOUT ANY WARRANTY; without even the implied warranty of
+        -:   13:// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        -:   14:// GNU General Public License for more details.
+        -:   15:
+        -:   16:// Under Section 7 of GPL version 3, you are granted additional
+        -:   17:// permissions described in the GCC Runtime Library Exception, version
+        -:   18:// 3.1, as published by the Free Software Foundation.
+        -:   19:
+        -:   20:// You should have received a copy of the GNU General Public License and
+        -:   21:// a copy of the GCC Runtime Library Exception along with this program;
+        -:   22:// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+        -:   23:// <http://www.gnu.org/licenses/>.
+        -:   24:
+        -:   25:/** @file bits/new_allocator.h
+        -:   26: *  This is an internal header file, included by other library headers.
+        -:   27: *  Do not attempt to use it directly. @headername{memory}
+        -:   28: */
+        -:   29:
+        -:   30:#ifndef _STD_NEW_ALLOCATOR_H
+        -:   31:#define _STD_NEW_ALLOCATOR_H 1
+        -:   32:
+        -:   33:#include <bits/c++config.h>
+        -:   34:#include <new>
+        -:   35:#include <bits/functexcept.h>
+        -:   36:#include <bits/move.h>
+        -:   37:#if __cplusplus >= 201103L
+        -:   38:#include <type_traits>
+        -:   39:#endif
+        -:   40:
+        -:   41:namespace std _GLIBCXX_VISIBILITY(default)
+        -:   42:{
+        -:   43:_GLIBCXX_BEGIN_NAMESPACE_VERSION
+        -:   44:
+        -:   45:  /**
+        -:   46:   * @brief  An allocator that uses global `new`, as per C++03 [20.4.1].
+        -:   47:   * @ingroup allocators
+        -:   48:   *
+        -:   49:   * This is precisely the allocator defined in the C++ Standard.
+        -:   50:   *   - all allocation calls `operator new`
+        -:   51:   *   - all deallocation calls `operator delete`
+        -:   52:   *
+        -:   53:   * This is the default base-class implementation of `std::allocator`,
+        -:   54:   * and is also the base-class of the `__gnu_cxx::new_allocator` extension.
+        -:   55:   * You should use either `std::allocator` or `__gnu_cxx::new_allocator`
+        -:   56:   * instead of using this directly.
+        -:   57:   *
+        -:   58:   * @tparam  _Tp  Type of allocated object.
+        -:   59:   *
+        -:   60:   * @headerfile memory
+        -:   61:   */
+        -:   62:  template<typename _Tp>
+        -:   63:    class __new_allocator
+        -:   64:    {
+        -:   65:    public:
+        -:   66:      typedef _Tp        value_type;
+        -:   67:      typedef std::size_t     size_type;
+        -:   68:      typedef std::ptrdiff_t  difference_type;
+        -:   69:#if __cplusplus <= 201703L
+        -:   70:      typedef _Tp*       pointer;
+        -:   71:      typedef const _Tp* const_pointer;
+        -:   72:      typedef _Tp&       reference;
+        -:   73:      typedef const _Tp& const_reference;
+        -:   74:
+        -:   75:      template<typename _Tp1>
+        -:   76:	struct rebind
+        -:   77:	{ typedef __new_allocator<_Tp1> other; };
+        -:   78:#endif
+        -:   79:
+        -:   80:#if __cplusplus >= 201103L
+        -:   81:      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:   82:      // 2103. propagate_on_container_move_assignment
+        -:   83:      typedef std::true_type propagate_on_container_move_assignment;
+        -:   84:#endif
+        -:   85:
+        -:   86:      _GLIBCXX20_CONSTEXPR
+       7*:   87:      __new_allocator() _GLIBCXX_USE_NOEXCEPT { }
+------------------
+_ZNSt15__new_allocatorImEC2Ev:
+function _ZNSt15__new_allocatorImEC2Ev called 0 returned 0% blocks executed 0%
+    #####:   87:      __new_allocator() _GLIBCXX_USE_NOEXCEPT { }
+------------------
+_ZNSt15__new_allocatorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEC2Ev:
+function _ZNSt15__new_allocatorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEC2Ev called 5 returned 100% blocks executed 100%
+        5:   87:      __new_allocator() _GLIBCXX_USE_NOEXCEPT { }
+------------------
+_ZNSt15__new_allocatorIiEC2Ev:
+function _ZNSt15__new_allocatorIiEC2Ev called 2 returned 100% blocks executed 100%
+        2:   87:      __new_allocator() _GLIBCXX_USE_NOEXCEPT { }
+------------------
+_ZNSt15__new_allocatorIbEC2Ev:
+function _ZNSt15__new_allocatorIbEC2Ev called 0 returned 0% blocks executed 0%
+    #####:   87:      __new_allocator() _GLIBCXX_USE_NOEXCEPT { }
+------------------
+_ZNSt15__new_allocatorIN5memdb6ColumnISt6vectorIhSaIhEEEEEC2Ev:
+function _ZNSt15__new_allocatorIN5memdb6ColumnISt6vectorIhSaIhEEEEEC2Ev called 0 returned 0% blocks executed 0%
+    #####:   87:      __new_allocator() _GLIBCXX_USE_NOEXCEPT { }
+------------------
+_ZNSt15__new_allocatorIN5memdb6ColumnIbEEEC2Ev:
+function _ZNSt15__new_allocatorIN5memdb6ColumnIbEEEC2Ev called 0 returned 0% blocks executed 0%
+    #####:   87:      __new_allocator() _GLIBCXX_USE_NOEXCEPT { }
+------------------
+_ZNSt15__new_allocatorIN5memdb6ColumnINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEEC2Ev:
+function _ZNSt15__new_allocatorIN5memdb6ColumnINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEEC2Ev called 0 returned 0% blocks executed 0%
+    #####:   87:      __new_allocator() _GLIBCXX_USE_NOEXCEPT { }
+------------------
+_ZNSt15__new_allocatorIN5memdb6ColumnIiEEEC2Ev:
+function _ZNSt15__new_allocatorIN5memdb6ColumnIiEEEC2Ev called 0 returned 0% blocks executed 0%
+    #####:   87:      __new_allocator() _GLIBCXX_USE_NOEXCEPT { }
+------------------
+        -:   88:
+        -:   89:      _GLIBCXX20_CONSTEXPR
+       6*:   90:      __new_allocator(const __new_allocator&) _GLIBCXX_USE_NOEXCEPT { }
+------------------
+_ZNSt15__new_allocatorIhEC2ERKS0_:
+function _ZNSt15__new_allocatorIhEC2ERKS0_ called 0 returned 0% blocks executed 0%
+    #####:   90:      __new_allocator(const __new_allocator&) _GLIBCXX_USE_NOEXCEPT { }
+------------------
+_ZNSt15__new_allocatorISt6vectorIhSaIhEEEC2ERKS3_:
+function _ZNSt15__new_allocatorISt6vectorIhSaIhEEEC2ERKS3_ called 0 returned 0% blocks executed 0%
+    #####:   90:      __new_allocator(const __new_allocator&) _GLIBCXX_USE_NOEXCEPT { }
+------------------
+_ZNSt15__new_allocatorImEC2ERKS0_:
+function _ZNSt15__new_allocatorImEC2ERKS0_ called 0 returned 0% blocks executed 0%
+    #####:   90:      __new_allocator(const __new_allocator&) _GLIBCXX_USE_NOEXCEPT { }
+------------------
+_ZNSt15__new_allocatorIN5memdb6ColumnINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEEC2ERKS9_:
+function _ZNSt15__new_allocatorIN5memdb6ColumnINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEEC2ERKS9_ called 0 returned 0% blocks executed 0%
+    #####:   90:      __new_allocator(const __new_allocator&) _GLIBCXX_USE_NOEXCEPT { }
+------------------
+_ZNSt15__new_allocatorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEC2ERKS6_:
+function _ZNSt15__new_allocatorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEC2ERKS6_ called 6 returned 100% blocks executed 100%
+        6:   90:      __new_allocator(const __new_allocator&) _GLIBCXX_USE_NOEXCEPT { }
+------------------
+_ZNSt15__new_allocatorIN5memdb6ColumnIiEEEC2ERKS3_:
+function _ZNSt15__new_allocatorIN5memdb6ColumnIiEEEC2ERKS3_ called 0 returned 0% blocks executed 0%
+    #####:   90:      __new_allocator(const __new_allocator&) _GLIBCXX_USE_NOEXCEPT { }
+------------------
+_ZNSt15__new_allocatorIiEC2ERKS0_:
+function _ZNSt15__new_allocatorIiEC2ERKS0_ called 0 returned 0% blocks executed 0%
+    #####:   90:      __new_allocator(const __new_allocator&) _GLIBCXX_USE_NOEXCEPT { }
+------------------
+        -:   91:
+        -:   92:      template<typename _Tp1>
+        -:   93:	_GLIBCXX20_CONSTEXPR
+        -:   94:	__new_allocator(const __new_allocator<_Tp1>&) _GLIBCXX_USE_NOEXCEPT { }
+        -:   95:
+        -:   96:#if __cplusplus >= 201103L
+        -:   97:      __new_allocator& operator=(const __new_allocator&) = default;
+        -:   98:#endif
+        -:   99:
+        -:  100:#if __cplusplus <= 201703L
+        -:  101:      ~__new_allocator() _GLIBCXX_USE_NOEXCEPT { }
+        -:  102:
+        -:  103:      pointer
+        -:  104:      address(reference __x) const _GLIBCXX_NOEXCEPT
+        -:  105:      { return std::__addressof(__x); }
+        -:  106:
+        -:  107:      const_pointer
+        -:  108:      address(const_reference __x) const _GLIBCXX_NOEXCEPT
+        -:  109:      { return std::__addressof(__x); }
+        -:  110:#endif
+        -:  111:
+        -:  112:#if __has_builtin(__builtin_operator_new) >= 201802L
+        -:  113:# define _GLIBCXX_OPERATOR_NEW __builtin_operator_new
+        -:  114:# define _GLIBCXX_OPERATOR_DELETE __builtin_operator_delete
+        -:  115:#else
+        -:  116:# define _GLIBCXX_OPERATOR_NEW ::operator new
+        -:  117:# define _GLIBCXX_OPERATOR_DELETE ::operator delete
+        -:  118:#endif
+        -:  119:
+        -:  120:      // NB: __n is permitted to be 0.  The C++ standard says nothing
+        -:  121:      // about what the return value is when __n == 0.
+        -:  122:      _GLIBCXX_NODISCARD _Tp*
+     122*:  123:      allocate(size_type __n, const void* = static_cast<const void*>(0))
+        -:  124:      {
+        -:  125:#if __cplusplus >= 201103L
+        -:  126:	// _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  127:	// 3308. std::allocator<void>().allocate(n)
+        -:  128:	static_assert(sizeof(_Tp) != 0, "cannot allocate incomplete types");
+        -:  129:#endif
+        -:  130:
+     122*:  131:	if (__builtin_expect(__n > this->_M_max_size(), false))
+        -:  132:	  {
+        -:  133:	    // _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  134:	    // 3190. allocator::allocate sometimes returns too little storage
+    #####:  135:	    if (__n > (std::size_t(-1) / sizeof(_Tp)))
+    #####:  136:	      std::__throw_bad_array_new_length();
+    #####:  137:	    std::__throw_bad_alloc();
+        -:  138:	  }
+        -:  139:
+        -:  140:#if __cpp_aligned_new
+        -:  141:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  142:	  {
+        -:  143:	    std::align_val_t __al = std::align_val_t(alignof(_Tp));
+        -:  144:	    return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp),
+        -:  145:							   __al));
+        -:  146:	  }
+        -:  147:#endif
+     122*:  148:	return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp)));
+        -:  149:      }
+------------------
+_ZNSt15__new_allocatorIhE8allocateEmPKv:
+function _ZNSt15__new_allocatorIhE8allocateEmPKv called 0 returned 0% blocks executed 0%
+    #####:  123:      allocate(size_type __n, const void* = static_cast<const void*>(0))
+        -:  124:      {
+        -:  125:#if __cplusplus >= 201103L
+        -:  126:	// _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  127:	// 3308. std::allocator<void>().allocate(n)
+        -:  128:	static_assert(sizeof(_Tp) != 0, "cannot allocate incomplete types");
+        -:  129:#endif
+        -:  130:
+    #####:  131:	if (__builtin_expect(__n > this->_M_max_size(), false))
+    %%%%%:  131-block  0
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  132:	  {
+        -:  133:	    // _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  134:	    // 3190. allocator::allocate sometimes returns too little storage
+        -:  135:	    if (__n > (std::size_t(-1) / sizeof(_Tp)))
+        -:  136:	      std::__throw_bad_array_new_length();
+    #####:  137:	    std::__throw_bad_alloc();
+    %%%%%:  137-block  0
+call    0 never executed
+        -:  138:	  }
+        -:  139:
+        -:  140:#if __cpp_aligned_new
+        -:  141:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  142:	  {
+        -:  143:	    std::align_val_t __al = std::align_val_t(alignof(_Tp));
+        -:  144:	    return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp),
+        -:  145:							   __al));
+        -:  146:	  }
+        -:  147:#endif
+    #####:  148:	return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp)));
+    %%%%%:  148-block  0
+call    0 never executed
+        -:  149:      }
+------------------
+_ZNSt15__new_allocatorISt6vectorIhSaIhEEE8allocateEmPKv:
+function _ZNSt15__new_allocatorISt6vectorIhSaIhEEE8allocateEmPKv called 0 returned 0% blocks executed 0%
+    #####:  123:      allocate(size_type __n, const void* = static_cast<const void*>(0))
+        -:  124:      {
+        -:  125:#if __cplusplus >= 201103L
+        -:  126:	// _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  127:	// 3308. std::allocator<void>().allocate(n)
+        -:  128:	static_assert(sizeof(_Tp) != 0, "cannot allocate incomplete types");
+        -:  129:#endif
+        -:  130:
+    #####:  131:	if (__builtin_expect(__n > this->_M_max_size(), false))
+    %%%%%:  131-block  0
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  132:	  {
+        -:  133:	    // _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  134:	    // 3190. allocator::allocate sometimes returns too little storage
+    #####:  135:	    if (__n > (std::size_t(-1) / sizeof(_Tp)))
+    %%%%%:  135-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:  136:	      std::__throw_bad_array_new_length();
+    %%%%%:  136-block  0
+call    0 never executed
+    #####:  137:	    std::__throw_bad_alloc();
+    %%%%%:  137-block  0
+call    0 never executed
+        -:  138:	  }
+        -:  139:
+        -:  140:#if __cpp_aligned_new
+        -:  141:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  142:	  {
+        -:  143:	    std::align_val_t __al = std::align_val_t(alignof(_Tp));
+        -:  144:	    return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp),
+        -:  145:							   __al));
+        -:  146:	  }
+        -:  147:#endif
+    #####:  148:	return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp)));
+    %%%%%:  148-block  0
+call    0 never executed
+        -:  149:      }
+------------------
+_ZNSt15__new_allocatorImE8allocateEmPKv:
+function _ZNSt15__new_allocatorImE8allocateEmPKv called 0 returned 0% blocks executed 0%
+    #####:  123:      allocate(size_type __n, const void* = static_cast<const void*>(0))
+        -:  124:      {
+        -:  125:#if __cplusplus >= 201103L
+        -:  126:	// _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  127:	// 3308. std::allocator<void>().allocate(n)
+        -:  128:	static_assert(sizeof(_Tp) != 0, "cannot allocate incomplete types");
+        -:  129:#endif
+        -:  130:
+    #####:  131:	if (__builtin_expect(__n > this->_M_max_size(), false))
+    %%%%%:  131-block  0
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  132:	  {
+        -:  133:	    // _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  134:	    // 3190. allocator::allocate sometimes returns too little storage
+    #####:  135:	    if (__n > (std::size_t(-1) / sizeof(_Tp)))
+    %%%%%:  135-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:  136:	      std::__throw_bad_array_new_length();
+    %%%%%:  136-block  0
+call    0 never executed
+    #####:  137:	    std::__throw_bad_alloc();
+    %%%%%:  137-block  0
+call    0 never executed
+        -:  138:	  }
+        -:  139:
+        -:  140:#if __cpp_aligned_new
+        -:  141:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  142:	  {
+        -:  143:	    std::align_val_t __al = std::align_val_t(alignof(_Tp));
+        -:  144:	    return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp),
+        -:  145:							   __al));
+        -:  146:	  }
+        -:  147:#endif
+    #####:  148:	return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp)));
+    %%%%%:  148-block  0
+call    0 never executed
+        -:  149:      }
+------------------
+_ZNSt15__new_allocatorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEE8allocateEmPKv:
+function _ZNSt15__new_allocatorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEE8allocateEmPKv called 16 returned 100% blocks executed 62%
+       16:  123:      allocate(size_type __n, const void* = static_cast<const void*>(0))
+        -:  124:      {
+        -:  125:#if __cplusplus >= 201103L
+        -:  126:	// _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  127:	// 3308. std::allocator<void>().allocate(n)
+        -:  128:	static_assert(sizeof(_Tp) != 0, "cannot allocate incomplete types");
+        -:  129:#endif
+        -:  130:
+       16:  131:	if (__builtin_expect(__n > this->_M_max_size(), false))
+       16:  131-block  0
+call    0 returned 16
+branch  1 taken 0 (fallthrough)
+branch  2 taken 16
+        -:  132:	  {
+        -:  133:	    // _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  134:	    // 3190. allocator::allocate sometimes returns too little storage
+    #####:  135:	    if (__n > (std::size_t(-1) / sizeof(_Tp)))
+    %%%%%:  135-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:  136:	      std::__throw_bad_array_new_length();
+    %%%%%:  136-block  0
+call    0 never executed
+    #####:  137:	    std::__throw_bad_alloc();
+    %%%%%:  137-block  0
+call    0 never executed
+        -:  138:	  }
+        -:  139:
+        -:  140:#if __cpp_aligned_new
+        -:  141:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  142:	  {
+        -:  143:	    std::align_val_t __al = std::align_val_t(alignof(_Tp));
+        -:  144:	    return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp),
+        -:  145:							   __al));
+        -:  146:	  }
+        -:  147:#endif
+       16:  148:	return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp)));
+       16:  148-block  0
+call    0 returned 16
+        -:  149:      }
+------------------
+_ZNSt15__new_allocatorIiE8allocateEmPKv:
+function _ZNSt15__new_allocatorIiE8allocateEmPKv called 2 returned 100% blocks executed 62%
+        2:  123:      allocate(size_type __n, const void* = static_cast<const void*>(0))
+        -:  124:      {
+        -:  125:#if __cplusplus >= 201103L
+        -:  126:	// _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  127:	// 3308. std::allocator<void>().allocate(n)
+        -:  128:	static_assert(sizeof(_Tp) != 0, "cannot allocate incomplete types");
+        -:  129:#endif
+        -:  130:
+        2:  131:	if (__builtin_expect(__n > this->_M_max_size(), false))
+        2:  131-block  0
+call    0 returned 2
+branch  1 taken 0 (fallthrough)
+branch  2 taken 2
+        -:  132:	  {
+        -:  133:	    // _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  134:	    // 3190. allocator::allocate sometimes returns too little storage
+    #####:  135:	    if (__n > (std::size_t(-1) / sizeof(_Tp)))
+    %%%%%:  135-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:  136:	      std::__throw_bad_array_new_length();
+    %%%%%:  136-block  0
+call    0 never executed
+    #####:  137:	    std::__throw_bad_alloc();
+    %%%%%:  137-block  0
+call    0 never executed
+        -:  138:	  }
+        -:  139:
+        -:  140:#if __cpp_aligned_new
+        -:  141:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  142:	  {
+        -:  143:	    std::align_val_t __al = std::align_val_t(alignof(_Tp));
+        -:  144:	    return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp),
+        -:  145:							   __al));
+        -:  146:	  }
+        -:  147:#endif
+        2:  148:	return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp)));
+        2:  148-block  0
+call    0 returned 2
+        -:  149:      }
+------------------
+_ZNSt15__new_allocatorIN5memdb6ColumnISt6vectorIhSaIhEEEEE8allocateEmPKv:
+function _ZNSt15__new_allocatorIN5memdb6ColumnISt6vectorIhSaIhEEEEE8allocateEmPKv called 0 returned 0% blocks executed 0%
+    #####:  123:      allocate(size_type __n, const void* = static_cast<const void*>(0))
+        -:  124:      {
+        -:  125:#if __cplusplus >= 201103L
+        -:  126:	// _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  127:	// 3308. std::allocator<void>().allocate(n)
+        -:  128:	static_assert(sizeof(_Tp) != 0, "cannot allocate incomplete types");
+        -:  129:#endif
+        -:  130:
+    #####:  131:	if (__builtin_expect(__n > this->_M_max_size(), false))
+    %%%%%:  131-block  0
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  132:	  {
+        -:  133:	    // _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  134:	    // 3190. allocator::allocate sometimes returns too little storage
+    #####:  135:	    if (__n > (std::size_t(-1) / sizeof(_Tp)))
+    %%%%%:  135-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:  136:	      std::__throw_bad_array_new_length();
+    %%%%%:  136-block  0
+call    0 never executed
+    #####:  137:	    std::__throw_bad_alloc();
+    %%%%%:  137-block  0
+call    0 never executed
+        -:  138:	  }
+        -:  139:
+        -:  140:#if __cpp_aligned_new
+        -:  141:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  142:	  {
+        -:  143:	    std::align_val_t __al = std::align_val_t(alignof(_Tp));
+        -:  144:	    return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp),
+        -:  145:							   __al));
+        -:  146:	  }
+        -:  147:#endif
+    #####:  148:	return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp)));
+    %%%%%:  148-block  0
+call    0 never executed
+        -:  149:      }
+------------------
+_ZNSt15__new_allocatorIN5memdb6ColumnIbEEE8allocateEmPKv:
+function _ZNSt15__new_allocatorIN5memdb6ColumnIbEEE8allocateEmPKv called 0 returned 0% blocks executed 0%
+    #####:  123:      allocate(size_type __n, const void* = static_cast<const void*>(0))
+        -:  124:      {
+        -:  125:#if __cplusplus >= 201103L
+        -:  126:	// _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  127:	// 3308. std::allocator<void>().allocate(n)
+        -:  128:	static_assert(sizeof(_Tp) != 0, "cannot allocate incomplete types");
+        -:  129:#endif
+        -:  130:
+    #####:  131:	if (__builtin_expect(__n > this->_M_max_size(), false))
+    %%%%%:  131-block  0
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  132:	  {
+        -:  133:	    // _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  134:	    // 3190. allocator::allocate sometimes returns too little storage
+    #####:  135:	    if (__n > (std::size_t(-1) / sizeof(_Tp)))
+    %%%%%:  135-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:  136:	      std::__throw_bad_array_new_length();
+    %%%%%:  136-block  0
+call    0 never executed
+    #####:  137:	    std::__throw_bad_alloc();
+    %%%%%:  137-block  0
+call    0 never executed
+        -:  138:	  }
+        -:  139:
+        -:  140:#if __cpp_aligned_new
+        -:  141:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  142:	  {
+        -:  143:	    std::align_val_t __al = std::align_val_t(alignof(_Tp));
+        -:  144:	    return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp),
+        -:  145:							   __al));
+        -:  146:	  }
+        -:  147:#endif
+    #####:  148:	return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp)));
+    %%%%%:  148-block  0
+call    0 never executed
+        -:  149:      }
+------------------
+_ZNSt15__new_allocatorIN5memdb6ColumnINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEE8allocateEmPKv:
+function _ZNSt15__new_allocatorIN5memdb6ColumnINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEE8allocateEmPKv called 0 returned 0% blocks executed 0%
+    #####:  123:      allocate(size_type __n, const void* = static_cast<const void*>(0))
+        -:  124:      {
+        -:  125:#if __cplusplus >= 201103L
+        -:  126:	// _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  127:	// 3308. std::allocator<void>().allocate(n)
+        -:  128:	static_assert(sizeof(_Tp) != 0, "cannot allocate incomplete types");
+        -:  129:#endif
+        -:  130:
+    #####:  131:	if (__builtin_expect(__n > this->_M_max_size(), false))
+    %%%%%:  131-block  0
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  132:	  {
+        -:  133:	    // _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  134:	    // 3190. allocator::allocate sometimes returns too little storage
+    #####:  135:	    if (__n > (std::size_t(-1) / sizeof(_Tp)))
+    %%%%%:  135-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:  136:	      std::__throw_bad_array_new_length();
+    %%%%%:  136-block  0
+call    0 never executed
+    #####:  137:	    std::__throw_bad_alloc();
+    %%%%%:  137-block  0
+call    0 never executed
+        -:  138:	  }
+        -:  139:
+        -:  140:#if __cpp_aligned_new
+        -:  141:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  142:	  {
+        -:  143:	    std::align_val_t __al = std::align_val_t(alignof(_Tp));
+        -:  144:	    return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp),
+        -:  145:							   __al));
+        -:  146:	  }
+        -:  147:#endif
+    #####:  148:	return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp)));
+    %%%%%:  148-block  0
+call    0 never executed
+        -:  149:      }
+------------------
+_ZNSt15__new_allocatorIN5memdb6ColumnIiEEE8allocateEmPKv:
+function _ZNSt15__new_allocatorIN5memdb6ColumnIiEEE8allocateEmPKv called 0 returned 0% blocks executed 0%
+    #####:  123:      allocate(size_type __n, const void* = static_cast<const void*>(0))
+        -:  124:      {
+        -:  125:#if __cplusplus >= 201103L
+        -:  126:	// _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  127:	// 3308. std::allocator<void>().allocate(n)
+        -:  128:	static_assert(sizeof(_Tp) != 0, "cannot allocate incomplete types");
+        -:  129:#endif
+        -:  130:
+    #####:  131:	if (__builtin_expect(__n > this->_M_max_size(), false))
+    %%%%%:  131-block  0
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  132:	  {
+        -:  133:	    // _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  134:	    // 3190. allocator::allocate sometimes returns too little storage
+    #####:  135:	    if (__n > (std::size_t(-1) / sizeof(_Tp)))
+    %%%%%:  135-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:  136:	      std::__throw_bad_array_new_length();
+    %%%%%:  136-block  0
+call    0 never executed
+    #####:  137:	    std::__throw_bad_alloc();
+    %%%%%:  137-block  0
+call    0 never executed
+        -:  138:	  }
+        -:  139:
+        -:  140:#if __cpp_aligned_new
+        -:  141:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  142:	  {
+        -:  143:	    std::align_val_t __al = std::align_val_t(alignof(_Tp));
+        -:  144:	    return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp),
+        -:  145:							   __al));
+        -:  146:	  }
+        -:  147:#endif
+    #####:  148:	return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp)));
+    %%%%%:  148-block  0
+call    0 never executed
+        -:  149:      }
+------------------
+_ZNSt15__new_allocatorIcE8allocateEmPKv:
+function _ZNSt15__new_allocatorIcE8allocateEmPKv called 104 returned 100% blocks executed 83%
+      104:  123:      allocate(size_type __n, const void* = static_cast<const void*>(0))
+        -:  124:      {
+        -:  125:#if __cplusplus >= 201103L
+        -:  126:	// _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  127:	// 3308. std::allocator<void>().allocate(n)
+        -:  128:	static_assert(sizeof(_Tp) != 0, "cannot allocate incomplete types");
+        -:  129:#endif
+        -:  130:
+      104:  131:	if (__builtin_expect(__n > this->_M_max_size(), false))
+      104:  131-block  0
+call    0 returned 104
+branch  1 taken 0 (fallthrough)
+branch  2 taken 104
+        -:  132:	  {
+        -:  133:	    // _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  134:	    // 3190. allocator::allocate sometimes returns too little storage
+        -:  135:	    if (__n > (std::size_t(-1) / sizeof(_Tp)))
+        -:  136:	      std::__throw_bad_array_new_length();
+    #####:  137:	    std::__throw_bad_alloc();
+    %%%%%:  137-block  0
+call    0 never executed
+        -:  138:	  }
+        -:  139:
+        -:  140:#if __cpp_aligned_new
+        -:  141:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  142:	  {
+        -:  143:	    std::align_val_t __al = std::align_val_t(alignof(_Tp));
+        -:  144:	    return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp),
+        -:  145:							   __al));
+        -:  146:	  }
+        -:  147:#endif
+      104:  148:	return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp)));
+      104:  148-block  0
+call    0 returned 104
+        -:  149:      }
+------------------
+        -:  150:
+        -:  151:      // __p is not permitted to be a null pointer.
+        -:  152:      void
+     113*:  153:      deallocate(_Tp* __p, size_type __n __attribute__ ((__unused__)))
+        -:  154:      {
+        -:  155:#if __cpp_sized_deallocation
+        -:  156:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p), (n) * sizeof(_Tp)
+        -:  157:#else
+        -:  158:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p)
+        -:  159:#endif
+        -:  160:
+        -:  161:#if __cpp_aligned_new
+        -:  162:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  163:	  {
+        -:  164:	    _GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n),
+        -:  165:				     std::align_val_t(alignof(_Tp)));
+        -:  166:	    return;
+        -:  167:	  }
+        -:  168:#endif
+     113*:  169:	_GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n));
+        -:  170:      }
+------------------
+_ZNSt15__new_allocatorIhE10deallocateEPhm:
+function _ZNSt15__new_allocatorIhE10deallocateEPhm called 0 returned 0% blocks executed 0%
+    #####:  153:      deallocate(_Tp* __p, size_type __n __attribute__ ((__unused__)))
+    %%%%%:  153-block  0
+        -:  154:      {
+        -:  155:#if __cpp_sized_deallocation
+        -:  156:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p), (n) * sizeof(_Tp)
+        -:  157:#else
+        -:  158:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p)
+        -:  159:#endif
+        -:  160:
+        -:  161:#if __cpp_aligned_new
+        -:  162:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  163:	  {
+        -:  164:	    _GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n),
+        -:  165:				     std::align_val_t(alignof(_Tp)));
+        -:  166:	    return;
+        -:  167:	  }
+        -:  168:#endif
+    #####:  169:	_GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n));
+    %%%%%:  169-block  0
+call    0 never executed
+        -:  170:      }
+------------------
+_ZNSt15__new_allocatorISt6vectorIhSaIhEEE10deallocateEPS2_m:
+function _ZNSt15__new_allocatorISt6vectorIhSaIhEEE10deallocateEPS2_m called 0 returned 0% blocks executed 0%
+    #####:  153:      deallocate(_Tp* __p, size_type __n __attribute__ ((__unused__)))
+    %%%%%:  153-block  0
+        -:  154:      {
+        -:  155:#if __cpp_sized_deallocation
+        -:  156:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p), (n) * sizeof(_Tp)
+        -:  157:#else
+        -:  158:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p)
+        -:  159:#endif
+        -:  160:
+        -:  161:#if __cpp_aligned_new
+        -:  162:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  163:	  {
+        -:  164:	    _GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n),
+        -:  165:				     std::align_val_t(alignof(_Tp)));
+        -:  166:	    return;
+        -:  167:	  }
+        -:  168:#endif
+    #####:  169:	_GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n));
+    %%%%%:  169-block  0
+call    0 never executed
+        -:  170:      }
+------------------
+_ZNSt15__new_allocatorImE10deallocateEPmm:
+function _ZNSt15__new_allocatorImE10deallocateEPmm called 0 returned 0% blocks executed 0%
+    #####:  153:      deallocate(_Tp* __p, size_type __n __attribute__ ((__unused__)))
+    %%%%%:  153-block  0
+        -:  154:      {
+        -:  155:#if __cpp_sized_deallocation
+        -:  156:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p), (n) * sizeof(_Tp)
+        -:  157:#else
+        -:  158:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p)
+        -:  159:#endif
+        -:  160:
+        -:  161:#if __cpp_aligned_new
+        -:  162:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  163:	  {
+        -:  164:	    _GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n),
+        -:  165:				     std::align_val_t(alignof(_Tp)));
+        -:  166:	    return;
+        -:  167:	  }
+        -:  168:#endif
+    #####:  169:	_GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n));
+    %%%%%:  169-block  0
+call    0 never executed
+        -:  170:      }
+------------------
+_ZNSt15__new_allocatorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEE10deallocateEPS5_m:
+function _ZNSt15__new_allocatorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEE10deallocateEPS5_m called 15 returned 100% blocks executed 100%
+       15:  153:      deallocate(_Tp* __p, size_type __n __attribute__ ((__unused__)))
+       15:  153-block  0
+        -:  154:      {
+        -:  155:#if __cpp_sized_deallocation
+        -:  156:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p), (n) * sizeof(_Tp)
+        -:  157:#else
+        -:  158:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p)
+        -:  159:#endif
+        -:  160:
+        -:  161:#if __cpp_aligned_new
+        -:  162:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  163:	  {
+        -:  164:	    _GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n),
+        -:  165:				     std::align_val_t(alignof(_Tp)));
+        -:  166:	    return;
+        -:  167:	  }
+        -:  168:#endif
+       15:  169:	_GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n));
+       15:  169-block  0
+call    0 returned 15
+        -:  170:      }
+------------------
+_ZNSt15__new_allocatorIiE10deallocateEPim:
+function _ZNSt15__new_allocatorIiE10deallocateEPim called 0 returned 0% blocks executed 0%
+    #####:  153:      deallocate(_Tp* __p, size_type __n __attribute__ ((__unused__)))
+    %%%%%:  153-block  0
+        -:  154:      {
+        -:  155:#if __cpp_sized_deallocation
+        -:  156:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p), (n) * sizeof(_Tp)
+        -:  157:#else
+        -:  158:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p)
+        -:  159:#endif
+        -:  160:
+        -:  161:#if __cpp_aligned_new
+        -:  162:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  163:	  {
+        -:  164:	    _GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n),
+        -:  165:				     std::align_val_t(alignof(_Tp)));
+        -:  166:	    return;
+        -:  167:	  }
+        -:  168:#endif
+    #####:  169:	_GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n));
+    %%%%%:  169-block  0
+call    0 never executed
+        -:  170:      }
+------------------
+_ZNSt15__new_allocatorIcE10deallocateEPcm:
+function _ZNSt15__new_allocatorIcE10deallocateEPcm called 98 returned 100% blocks executed 100%
+       98:  153:      deallocate(_Tp* __p, size_type __n __attribute__ ((__unused__)))
+       98:  153-block  0
+        -:  154:      {
+        -:  155:#if __cpp_sized_deallocation
+        -:  156:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p), (n) * sizeof(_Tp)
+        -:  157:#else
+        -:  158:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p)
+        -:  159:#endif
+        -:  160:
+        -:  161:#if __cpp_aligned_new
+        -:  162:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  163:	  {
+        -:  164:	    _GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n),
+        -:  165:				     std::align_val_t(alignof(_Tp)));
+        -:  166:	    return;
+        -:  167:	  }
+        -:  168:#endif
+       98:  169:	_GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n));
+       98:  169-block  0
+call    0 returned 98
+        -:  170:      }
+------------------
+_ZNSt15__new_allocatorIN5memdb6ColumnISt6vectorIhSaIhEEEEE10deallocateEPS5_m:
+function _ZNSt15__new_allocatorIN5memdb6ColumnISt6vectorIhSaIhEEEEE10deallocateEPS5_m called 0 returned 0% blocks executed 0%
+    #####:  153:      deallocate(_Tp* __p, size_type __n __attribute__ ((__unused__)))
+    %%%%%:  153-block  0
+        -:  154:      {
+        -:  155:#if __cpp_sized_deallocation
+        -:  156:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p), (n) * sizeof(_Tp)
+        -:  157:#else
+        -:  158:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p)
+        -:  159:#endif
+        -:  160:
+        -:  161:#if __cpp_aligned_new
+        -:  162:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  163:	  {
+        -:  164:	    _GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n),
+        -:  165:				     std::align_val_t(alignof(_Tp)));
+        -:  166:	    return;
+        -:  167:	  }
+        -:  168:#endif
+    #####:  169:	_GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n));
+    %%%%%:  169-block  0
+call    0 never executed
+        -:  170:      }
+------------------
+_ZNSt15__new_allocatorIN5memdb6ColumnINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEE10deallocateEPS8_m:
+function _ZNSt15__new_allocatorIN5memdb6ColumnINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEE10deallocateEPS8_m called 0 returned 0% blocks executed 0%
+    #####:  153:      deallocate(_Tp* __p, size_type __n __attribute__ ((__unused__)))
+    %%%%%:  153-block  0
+        -:  154:      {
+        -:  155:#if __cpp_sized_deallocation
+        -:  156:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p), (n) * sizeof(_Tp)
+        -:  157:#else
+        -:  158:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p)
+        -:  159:#endif
+        -:  160:
+        -:  161:#if __cpp_aligned_new
+        -:  162:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  163:	  {
+        -:  164:	    _GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n),
+        -:  165:				     std::align_val_t(alignof(_Tp)));
+        -:  166:	    return;
+        -:  167:	  }
+        -:  168:#endif
+    #####:  169:	_GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n));
+    %%%%%:  169-block  0
+call    0 never executed
+        -:  170:      }
+------------------
+_ZNSt15__new_allocatorIN5memdb6ColumnIbEEE10deallocateEPS2_m:
+function _ZNSt15__new_allocatorIN5memdb6ColumnIbEEE10deallocateEPS2_m called 0 returned 0% blocks executed 0%
+    #####:  153:      deallocate(_Tp* __p, size_type __n __attribute__ ((__unused__)))
+    %%%%%:  153-block  0
+        -:  154:      {
+        -:  155:#if __cpp_sized_deallocation
+        -:  156:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p), (n) * sizeof(_Tp)
+        -:  157:#else
+        -:  158:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p)
+        -:  159:#endif
+        -:  160:
+        -:  161:#if __cpp_aligned_new
+        -:  162:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  163:	  {
+        -:  164:	    _GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n),
+        -:  165:				     std::align_val_t(alignof(_Tp)));
+        -:  166:	    return;
+        -:  167:	  }
+        -:  168:#endif
+    #####:  169:	_GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n));
+    %%%%%:  169-block  0
+call    0 never executed
+        -:  170:      }
+------------------
+_ZNSt15__new_allocatorIN5memdb6ColumnIiEEE10deallocateEPS2_m:
+function _ZNSt15__new_allocatorIN5memdb6ColumnIiEEE10deallocateEPS2_m called 0 returned 0% blocks executed 0%
+    #####:  153:      deallocate(_Tp* __p, size_type __n __attribute__ ((__unused__)))
+    %%%%%:  153-block  0
+        -:  154:      {
+        -:  155:#if __cpp_sized_deallocation
+        -:  156:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p), (n) * sizeof(_Tp)
+        -:  157:#else
+        -:  158:# define _GLIBCXX_SIZED_DEALLOC(p, n) (p)
+        -:  159:#endif
+        -:  160:
+        -:  161:#if __cpp_aligned_new
+        -:  162:	if (alignof(_Tp) > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+        -:  163:	  {
+        -:  164:	    _GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n),
+        -:  165:				     std::align_val_t(alignof(_Tp)));
+        -:  166:	    return;
+        -:  167:	  }
+        -:  168:#endif
+    #####:  169:	_GLIBCXX_OPERATOR_DELETE(_GLIBCXX_SIZED_DEALLOC(__p, __n));
+    %%%%%:  169-block  0
+call    0 never executed
+        -:  170:      }
+------------------
+        -:  171:
+        -:  172:#undef _GLIBCXX_SIZED_DEALLOC
+        -:  173:#undef _GLIBCXX_OPERATOR_DELETE
+        -:  174:#undef _GLIBCXX_OPERATOR_NEW
+        -:  175:
+        -:  176:#if __cplusplus <= 201703L
+        -:  177:      size_type
+        -:  178:      max_size() const _GLIBCXX_USE_NOEXCEPT
+        -:  179:      { return _M_max_size(); }
+        -:  180:
+        -:  181:#if __cplusplus >= 201103L
+        -:  182:      template<typename _Up, typename... _Args>
+        -:  183:	void
+        -:  184:	construct(_Up* __p, _Args&&... __args)
+        -:  185:	noexcept(std::is_nothrow_constructible<_Up, _Args...>::value)
+        -:  186:	{ ::new((void *)__p) _Up(std::forward<_Args>(__args)...); }
+        -:  187:
+        -:  188:      template<typename _Up>
+        -:  189:	void
+        -:  190:	destroy(_Up* __p)
+        -:  191:	noexcept(std::is_nothrow_destructible<_Up>::value)
+        -:  192:	{ __p->~_Up(); }
+        -:  193:#else
+        -:  194:      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+        -:  195:      // 402. wrong new expression in [some_] allocator::construct
+        -:  196:      void
+        -:  197:      construct(pointer __p, const _Tp& __val)
+        -:  198:      { ::new((void *)__p) _Tp(__val); }
+        -:  199:
+        -:  200:      void
+        -:  201:      destroy(pointer __p) { __p->~_Tp(); }
+        -:  202:#endif
+        -:  203:#endif // ! C++20
+        -:  204:
+        -:  205:      template<typename _Up>
+        -:  206:	friend _GLIBCXX20_CONSTEXPR bool
+        -:  207:	operator==(const __new_allocator&, const __new_allocator<_Up>&)
+        -:  208:	_GLIBCXX_NOTHROW
+        -:  209:	{ return true; }
+        -:  210:
+        -:  211:#if __cpp_impl_three_way_comparison < 201907L
+        -:  212:      template<typename _Up>
+        -:  213:	friend _GLIBCXX20_CONSTEXPR bool
+        -:  214:	operator!=(const __new_allocator&, const __new_allocator<_Up>&)
+        -:  215:	_GLIBCXX_NOTHROW
+        -:  216:	{ return false; }
+        -:  217:#endif
+        -:  218:
+        -:  219:    private:
+        -:  220:      _GLIBCXX_CONSTEXPR size_type
+     122*:  221:      _M_max_size() const _GLIBCXX_USE_NOEXCEPT
+        -:  222:      {
+        -:  223:#if __PTRDIFF_MAX__ < __SIZE_MAX__
+     122*:  224:	return std::size_t(__PTRDIFF_MAX__) / sizeof(_Tp);
+        -:  225:#else
+        -:  226:	return std::size_t(-1) / sizeof(_Tp);
+        -:  227:#endif
+        -:  228:      }
+        -:  229:    };
+        -:  230:
+        -:  231:_GLIBCXX_END_NAMESPACE_VERSION
+        -:  232:} // namespace
+        -:  233:
+        -:  234:#endif

@@ -6,4 +6,4 @@ set(CMAKE_CXX_STANDARD 23)
 add_subdirectory(lib)
 
 add_executable(main main.cpp)
-target_link_libraries(main PRIVATE memdb)
+target_link_libraries(main INTERFACE memdb)
