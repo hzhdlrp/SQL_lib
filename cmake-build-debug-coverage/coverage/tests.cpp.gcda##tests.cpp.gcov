@@ -1,0 +1,337 @@
+        -:    0:Source:/Users/vadimleonov/Desktop/плюсы/SQL_lib/lib/tests.cpp
+        -:    0:Graph:/Users/vadimleonov/Desktop/плюсы/SQL_lib/cmake-build-debug-coverage/lib/CMakeFiles/tests.dir/tests.cpp.gcno
+        -:    0:Data:/Users/vadimleonov/Desktop/плюсы/SQL_lib/cmake-build-debug-coverage/lib/CMakeFiles/tests.dir/tests.cpp.gcda
+        -:    0:Runs:1
+        -:    1:#include "memdb.hpp"
+        -:    2:#include <gtest/gtest.h>
+        -:    3:
+        -:    4:using namespace memdb;
+        -:    5:
+    #####:    6:TEST(memdb, constructors1) {
+    #####:    7:    Column<int32_t> c1("column1", 0, 0);
+    #####:    8:    Column<std::string> c2("column2", 0);
+    #####:    9:    std::tuple{c1, c2};
+        -:   10:
+    #####:   11:    Table table("table1", std::vector{c1}, std::vector{c2}, std::vector<Column<bool>>{}, std::vector<Column<std::vector<uint8_t>>>{});
+        -:   12:
+    #####:   13:    ASSERT_EQ(table.getColumnsCount(), 2);
+    #####:   14:    ASSERT_EQ(table.name, "table1");
+    #####:   15:    ASSERT_EQ(c1.name, "column1");
+    #####:   16:}
+------------------
+_ZN24memdb_constructors1_TestC1Ev:
+function _ZN24memdb_constructors1_TestC1Ev called 0 returned 0% blocks executed 0%
+    #####:    6:TEST(memdb, constructors1) {
+    %%%%%:    6-block  0
+call    0 never executed
+------------------
+_ZN24memdb_constructors1_TestD0Ev:
+function _ZN24memdb_constructors1_TestD0Ev called 0 returned 0% blocks executed 0%
+    #####:    6:TEST(memdb, constructors1) {
+    %%%%%:    6-block  0
+call    0 never executed
+call    1 never executed
+------------------
+_ZN24memdb_constructors1_TestD1Ev:
+function _ZN24memdb_constructors1_TestD1Ev called 0 returned 0% blocks executed 0%
+    #####:    6:TEST(memdb, constructors1) {
+    %%%%%:    6-block  0
+call    0 never executed
+------------------
+_ZN24memdb_constructors1_Test8TestBodyEv:
+function _ZN24memdb_constructors1_Test8TestBodyEv called 0 returned 0% blocks executed 0%
+    #####:    6:TEST(memdb, constructors1) {
+    #####:    7:    Column<int32_t> c1("column1", 0, 0);
+    %%%%%:    7-block  0
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    %%%%%:    7-block  1
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+    %%%%%:    7-block  2
+call    7 never executed
+call    8 never executed
+    $$$$$:    7-block  3
+    $$$$$:    7-block  4
+call    9 never executed
+    $$$$$:    7-block  5
+call   10 never executed
+    $$$$$:    7-block  6
+    $$$$$:    7-block  7
+    #####:    8:    Column<std::string> c2("column2", 0);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    %%%%%:    8-block  0
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+    %%%%%:    8-block  1
+call    7 never executed
+call    8 never executed
+    $$$$$:    8-block  2
+call    9 never executed
+    $$$$$:    8-block  3
+call   10 never executed
+    $$$$$:    8-block  4
+    $$$$$:    8-block  5
+    #####:    9:    std::tuple{c1, c2};
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    %%%%%:    9-block  0
+call    3 never executed
+    $$$$$:    9-block  1
+        -:   10:
+    #####:   11:    Table table("table1", std::vector{c1}, std::vector{c2}, std::vector<Column<bool>>{}, std::vector<Column<std::vector<uint8_t>>>{});
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+    %%%%%:   11-block  0
+call   10 never executed
+call   11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+    %%%%%:   11-block  1
+call   15 never executed
+call   16 never executed
+call   17 never executed
+call   18 never executed
+    %%%%%:   11-block  2
+branch 19 never executed
+branch 20 never executed
+    %%%%%:   11-block  3
+call   21 never executed
+    %%%%%:   11-block  4
+call   22 never executed
+call   23 never executed
+    %%%%%:   11-block  5
+branch 24 never executed
+branch 25 never executed
+    %%%%%:   11-block  6
+call   26 never executed
+    %%%%%:   11-block  7
+call   27 never executed
+call   28 never executed
+    $$$$$:   11-block  8
+call   29 never executed
+    $$$$$:   11-block  9
+    $$$$$:   11-block 10
+call   30 never executed
+    $$$$$:   11-block 11
+    $$$$$:   11-block 12
+call   31 never executed
+    $$$$$:   11-block 13
+call   32 never executed
+    $$$$$:   11-block 14
+    $$$$$:   11-block 15
+    $$$$$:   11-block 16
+branch 33 never executed
+branch 34 never executed
+    $$$$$:   11-block 17
+call   35 never executed
+    $$$$$:   11-block 18
+    $$$$$:   11-block 19
+    $$$$$:   11-block 20
+call   36 never executed
+    $$$$$:   11-block 21
+call   37 never executed
+    $$$$$:   11-block 22
+    $$$$$:   11-block 23
+    $$$$$:   11-block 24
+branch 38 never executed
+branch 39 never executed
+    $$$$$:   11-block 25
+call   40 never executed
+    $$$$$:   11-block 26
+    $$$$$:   11-block 27
+    $$$$$:   11-block 28
+call   41 never executed
+    $$$$$:   11-block 29
+call   42 never executed
+    $$$$$:   11-block 30
+    $$$$$:   11-block 31
+        -:   12:
+    #####:   13:    ASSERT_EQ(table.getColumnsCount(), 2);
+call    0 never executed
+call    1 never executed
+branch  2 never executed
+branch  3 never executed
+    %%%%%:   13-block  0
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+    %%%%%:   13-block  1
+call    7 never executed
+branch  8 never executed
+branch  9 never executed
+    %%%%%:   13-block  2
+call   10 never executed
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+    %%%%%:   13-block  3
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+    %%%%%:   13-block  4
+call   17 never executed
+call   18 never executed
+    %%%%%:   13-block  5
+    %%%%%:   13-block  6
+call   19 never executed
+branch 20 never executed
+branch 21 never executed
+    $$$$$:   13-block  7
+    $$$$$:   13-block  8
+    $$$$$:   13-block  9
+call   22 never executed
+    $$$$$:   13-block 10
+    $$$$$:   13-block 11
+call   23 never executed
+    $$$$$:   13-block 12
+    $$$$$:   13-block 13
+call   24 never executed
+    #####:   14:    ASSERT_EQ(table.name, "table1");
+    %%%%%:   14-block  0
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    %%%%%:   14-block  1
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    %%%%%:   14-block  2
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+    %%%%%:   14-block  3
+call    9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+    %%%%%:   14-block  4
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+    %%%%%:   14-block  5
+call   16 never executed
+call   17 never executed
+    %%%%%:   14-block  6
+    %%%%%:   14-block  7
+call   18 never executed
+branch 19 never executed
+branch 20 never executed
+    $$$$$:   14-block  8
+call   21 never executed
+    $$$$$:   14-block  9
+    $$$$$:   14-block 10
+call   22 never executed
+    $$$$$:   14-block 11
+    $$$$$:   14-block 12
+call   23 never executed
+    #####:   15:    ASSERT_EQ(c1.name, "column1");
+    %%%%%:   15-block  0
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    %%%%%:   15-block  1
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+    %%%%%:   15-block  2
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+    %%%%%:   15-block  3
+call    9 never executed
+call   10 never executed
+branch 11 never executed
+branch 12 never executed
+    %%%%%:   15-block  4
+call   13 never executed
+branch 14 never executed
+branch 15 never executed
+    %%%%%:   15-block  5
+call   16 never executed
+call   17 never executed
+    %%%%%:   15-block  6
+    %%%%%:   15-block  7
+call   18 never executed
+branch 19 never executed
+branch 20 never executed
+    $$$$$:   15-block  8
+call   21 never executed
+    $$$$$:   15-block  9
+    $$$$$:   15-block 10
+call   22 never executed
+    $$$$$:   15-block 11
+    $$$$$:   15-block 12
+call   23 never executed
+    #####:   16:}
+    %%%%%:   16-block  0
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    %%%%%:   16-block  1
+call    3 never executed
+    %%%%%:   16-block  2
+call    4 never executed
+branch  5 never executed
+branch  6 never executed
+    %%%%%:   16-block  3
+call    7 never executed
+    %%%%%:   16-block  4
+    %%%%%:   16-block  5
+call    8 never executed
+branch  9 never executed
+branch 10 never executed
+    %%%%%:   16-block  6
+    %%%%%:   16-block  7
+call   11 never executed
+branch 12 never executed
+branch 13 never executed
+    %%%%%:   16-block  8
+    %%%%%:   16-block  9
+call   14 never executed
+branch 15 never executed
+branch 16 never executed
+    $$$$$:   16-block 10
+branch 17 never executed
+branch 18 never executed
+    $$$$$:   16-block 11
+    $$$$$:   16-block 12
+branch 19 never executed
+branch 20 never executed
+    $$$$$:   16-block 13
+call   21 never executed
+    $$$$$:   16-block 14
+branch 22 never executed
+branch 23 never executed
+    $$$$$:   16-block 15
+    $$$$$:   16-block 16
+branch 24 never executed
+branch 25 never executed
+    $$$$$:   16-block 17
+call   26 never executed
+    $$$$$:   16-block 18
+call   27 never executed
+    $$$$$:   16-block 19
+call   28 never executed
+    $$$$$:   16-block 20
+call   29 never executed
+------------------
+        -:   17:
+        -:   18:

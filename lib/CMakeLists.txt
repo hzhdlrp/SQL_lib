@@ -1,4 +1,14 @@
 set(CMAKE_CXX_STANDARD 23)
 
-add_library(memdb STATIC memdb.cpp)
-target_include_directories(memdb PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+add_library(memdb INTERFACE)
+target_include_directories(memdb INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_include_directories(memdb INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+set_target_properties(memdb PROPERTIES LINKER_LANGUAGE CXX)
+
+add_executable(tests tests.cpp)
+
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/googletest")
+target_include_directories(tests PUBLIC "${gtest_SOURCE_DIR}/include")
+target_link_libraries(tests gtest gtest_main)
+target_link_libraries(tests memdb)
