@@ -3,25 +3,23 @@
 #include "memory"
 #include <variant>
 
-
-class Query {
+struct Query {
 public:
     virtual std::variant<memdb::Table, std::monostate> execute(memdb::Database &db) = 0;
 };
 
-class Create : public Query {
+struct Create : public Query {
     memdb::Table table;
 public:
     Create(memdb::Table &t) : table(t) {}
 
     std::variant<memdb::Table, std::monostate> execute(memdb::Database &db) override {
-        db.addNewTable(std::make_shared<memdb::Table>(std::move(table)));
+        db.addNewTable(std::move(table));
         return std::monostate{};
     }
 };
 
-class Insert : public Query {
-
+struct Insert : public Query {
     std::variant<memdb::Table, std::monostate> execute(memdb::Database &db) override {
 
     }
@@ -32,5 +30,7 @@ void execute(memdb::Database &db, Query &&q) {
 }
 
 class Parser {
-
+    std::shared_ptr<Query> parse(std::string &&string) {
+        return std::make_shared<Query>(Insert());
+    }
 };

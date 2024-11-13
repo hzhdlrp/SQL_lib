@@ -1,8 +1,6 @@
 set(CMAKE_CXX_STANDARD 23)
 
-add_library(memdb INTERFACE)
-target_include_directories(memdb INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
-
+add_library(memdb INTERFACE memdb.hpp parser.hpp)
 target_include_directories(memdb INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 set_target_properties(memdb PROPERTIES LINKER_LANGUAGE CXX)
 

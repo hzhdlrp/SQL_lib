@@ -141,6 +141,12 @@ build install/strip: phony CMakeFiles/install/strip.util
 # /Users/vadimleonov/Desktop/плюсы/SQL_lib/CMakeLists.txt
 # =============================================================================
 
+
+#############################################
+# Utility command for memdb
+
+build lib/memdb: phony
+
 # =============================================================================
 # Object build statements for EXECUTABLE target tests
 
@@ -148,7 +154,7 @@ build install/strip: phony CMakeFiles/install/strip.util
 #############################################
 # Order-only phony target for tests
 
-build cmake_object_order_depends_target_tests: phony || cmake_object_order_depends_target_gtest cmake_object_order_depends_target_gtest_main
+build cmake_object_order_depends_target_tests: phony || cmake_object_order_depends_target_gtest cmake_object_order_depends_target_gtest_main lib/memdb
 
 build lib/CMakeFiles/tests.dir/tests.cpp.o: CXX_COMPILER__tests_unscanned_Debug /Users/vadimleonov/Desktop/плюсы/SQL_lib/lib/tests.cpp || cmake_object_order_depends_target_tests
   DEP_FILE = lib/CMakeFiles/tests.dir/tests.cpp.o.d
@@ -165,7 +171,7 @@ build lib/CMakeFiles/tests.dir/tests.cpp.o: CXX_COMPILER__tests_unscanned_Debug 
 #############################################
 # Link the executable lib/tests
 
-build lib/tests: CXX_EXECUTABLE_LINKER__tests_Debug lib/CMakeFiles/tests.dir/tests.cpp.o | lib/libgtest.a lib/libgtest_main.a lib/libgtest.a || lib/libgtest.a lib/libgtest_main.a
+build lib/tests: CXX_EXECUTABLE_LINKER__tests_Debug lib/CMakeFiles/tests.dir/tests.cpp.o | lib/libgtest.a lib/libgtest_main.a lib/libgtest.a || lib/libgtest.a lib/libgtest_main.a lib/memdb
   FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk
   LINK_LIBRARIES = lib/libgtest.a  lib/libgtest_main.a  lib/libgtest.a
   OBJECT_DIR = lib/CMakeFiles/tests.dir
@@ -600,6 +606,8 @@ build libgtest.a: phony lib/libgtest.a
 
 build libgtest_main.a: phony lib/libgtest_main.a
 
+build memdb: phony lib/memdb
+
 build tests: phony lib/tests
 
 # =============================================================================
@@ -617,7 +625,7 @@ build all: phony main lib/all
 #############################################
 # Folder: /Users/vadimleonov/Desktop/плюсы/SQL_lib/cmake-build-debug/lib
 
-build lib/all: phony lib/tests lib/googletest/all
+build lib/all: phony lib/memdb lib/tests lib/googletest/all
 
 # =============================================================================
 

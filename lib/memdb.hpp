@@ -22,6 +22,8 @@ const char* ExecutionException::what() const noexcept
 
 namespace memdb {
 
+#define int int32_t
+
     struct ColumnAttributes {
         bool unique = false;
         bool autoincrement = false;
@@ -91,7 +93,7 @@ namespace memdb {
     struct Table {
         std::vector<std::variant<Column<int>, Column<bool>, Column<std::string>, Column<std::vector<uint8_t>>>> columns;
         std::string name;
-        int getColumnsCount() {return columns.size();}
+        int getColumnsCount() const {return columns.size();}
         Table(std::string &&s, std::vector<std::variant<Column<int>, Column<bool>, Column<std::string>, Column<std::vector<uint8_t>>>> &&vec) {
             name = s;
             columns = std::move(vec);
@@ -208,6 +210,7 @@ namespace memdb {
                                 throw ExecutionException("error while column type definition (unexpected) \n");
                             }
                         }
+                        if (found) break;
                     }
 
                     if (!found) throw ExecutionException("no column with name " + val.first + "\n");
@@ -305,15 +308,26 @@ namespace memdb {
     };
 
 
-//    class Database {
-//        std::vector<Table> tables;
-//        std::vector<const std::type_info*> types;
-//
-//    public:
-//        void addNewTable(const std::shared_ptr<TableBase>&, const std::type_info *);
-//        void insertToTable(std::string &values, std::string &name);
-//    };
+    class Database {
+        std::vector<Table> tables;
 
+    public:
+        void addNewTable(Table &&t) {
+            tables.push_back(t);
+        }
+        void insertToTable(std::string &&name, Line &&line) {
+            bool found = false;
+            for (auto table : tables) {
+                if (table.name == name) {
+                    table.insert(line);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) throw ExecutionException("no tables with name " + name + "\n");
+        }
+    };
+#undef int
 }
 
 
