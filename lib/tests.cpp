@@ -15,7 +15,17 @@ TEST(memdb, constructors1) {
 }
 
 TEST(memdb, constructor2) {
-    ASSERT_EQ(1, 1);
+    Column<int32_t> c1("column1", 0, 0);
+    Column<std::string> c2("column2", 0);
+
+    Table table("table1", std::vector{c1}, std::vector{c2}, std::vector<Column<bool>>{}, std::vector<Column<std::vector<uint8_t>>>{});
+
+    }
+
+int main(int argc, char **argv) {
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
+
 
 
