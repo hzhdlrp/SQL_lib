@@ -62,8 +62,7 @@ struct Parser {
                 ss >> name;
 
                 std::regex r(R"((?:\{[^}]+\}\s*)?\w+\s*:\s*\w+(?:\[\d+\])?(?:\s*=\s*[^,)]+)?,?)");
-                std::string remained;
-                ss >> remained;
+                std::string remained = ss.str();
 
                 std::vector<std::string> columns_info;
                 std::vector<std::variant<memdb::Column<int>, memdb::Column<bool>, memdb::Column<std::string>, memdb::Column<memdb::ByteString>>> columnObjectVariants;
@@ -94,7 +93,7 @@ struct Parser {
 
                     for (auto &a : attributes) {
                         if (!attributesSet.contains(a)) {
-                            throw ExecutionException("unknown attribute\n");
+                            throw ExecutionException("unknown attribute " + a + "\n");
                         }
 
                         if (a == "unique") {
@@ -111,9 +110,8 @@ struct Parser {
 
                     columnName = smatch.str();
                     column_info = smatch.suffix();
-
                     std::string columnType;
-                    std::regex_search(column_info, smatch, std::regex(R"([^\s:=])"));
+                    std::regex_search(column_info, smatch, std::regex(R"([^\s:=]+)"));
 
                     columnType = smatch.str();
                     column_info = smatch.suffix();
@@ -135,6 +133,7 @@ struct Parser {
                             columnObjectVariants.emplace_back(memdb::Column<bool>(std::move(columnName), std::move(columnAttributes), std::move(val),0));
                         } else {
                             std::smatch smatch1;
+
                             std::regex_search(columnType, smatch1, std::regex("[^\\[\\]/0-9]+"));
                             columnType = smatch1.str();
                             std::string lenght = smatch1.suffix();
@@ -184,6 +183,7 @@ struct Parser {
 
                 }
 
+//                std::cout << columnObjectVariants.size();
                 memdb::Table table(std::move(name), std::move(columnObjectVariants));
                 CreateTable createTable(table);
                 return std::make_shared<CreateTable>(createTable);

@@ -57,12 +57,51 @@ namespace memdb {
             len = l;
             type = typeid(T).name();
         };
+        Column(const Column &c) {
+            name = c.name;
+            attributes = c.attributes;
+            len = c.getLen();
+            type = c.getType();
+            value = c.value;
+            vector = c.vector;
+            hasDefoltValue = c.hasDefoltValue;
+
+        }
+        Column(Column &&c) {
+            name = c.name;
+            attributes = c.attributes;
+            len = c.getLen();
+            type = c.getType();
+            value = c.value;
+            vector = c.vector;
+            hasDefoltValue = c.hasDefoltValue;
+
+        }
+        void operator=(const Column &c) {
+            name = c.name;
+            attributes = c.attributes;
+            len = c.getLen();
+            type = c.getType();
+            value = c.value;
+            vector = c.vector;
+            hasDefoltValue = c.hasDefoltValue;
+        }
+        void operator=(Column &&c) {
+            name = c.name;
+            attributes = c.attributes;
+            len = c.getLen();
+            type = c.getType();
+            value = c.value;
+            vector = c.vector;
+            hasDefoltValue = c.hasDefoltValue;
+        }
         std::vector<T> vector;
         T value;
         bool hasDefoltValue = false;
         std::string name;
         ColumnAttributes attributes;
-        int getLen() {return len;}
+        int getLen() const {return len;}
+        std::string getType() const {return type;}
     private:
         std::string type;
         int len; // for strings and bytes
@@ -104,10 +143,26 @@ namespace memdb {
             columns = std::move(vec);
         }
 
+        Table(const Table &t) {
+            columns = t.columns;
+            name = t.name;
+        }
+        Table(Table &&t) {
+            columns = t.columns;
+            name = t.name;
+        }
+        void operator=(const Table& t) {
+            columns = t.columns;
+            name = t.name;
+        }
+        void operator=(Table&& t) {
+            columns = t.columns;
+            name = t.name;
+        }
+
         std::string getColumnsNamesString() {
             std::string s;
             for (auto &c : columns) {
-                std::cout << c.index() << '\n';
                 switch (c.index()) {
                     case C_INT: {
                         s += std::get<C_INT>(c).name + "|";
@@ -339,6 +394,9 @@ namespace memdb {
     };
 
 
+
+
+#include <iostream>
 class Database {
     std::vector<Table> tables;
 
@@ -354,7 +412,7 @@ public:
         std::string getTablesColumnsString() {
             std::string s;
             for (auto &t : tables) {
-                s += (t.getColumnsNamesString() + "\n");
+                s += (t.getColumnsNamesString());
             }
             return s;
         }
