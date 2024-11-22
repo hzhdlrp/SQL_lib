@@ -3,22 +3,22 @@
 #include <memory>
 #include <vector>
 #include <variant>
+#include <exception>
+#include <iostream>
 
 class ExecutionException : std::exception
 {
 public:
     ExecutionException(std::string &&whatStr) noexcept : whatStr(std::move(whatStr)) {}
     ExecutionException(const std::string &whatStr) noexcept : whatStr(whatStr) {}
-    ~ExecutionException() noexcept;
-    const char* what() const noexcept override;
+    ~ExecutionException() noexcept {}
+    const char* what() const noexcept override {
+        return whatStr.c_str();
+    }
 private:
     std::string whatStr;
 };
 
-const char* ExecutionException::what() const noexcept
-{
-    return whatStr.c_str();
-}
 
 namespace memdb {
 
@@ -74,12 +74,16 @@ namespace memdb {
         bool defaultValue;
     };
 
+    struct ByteString {
+        std::string str;
+    };
+
     struct Line {
-        Line(bool has_names, std::vector<std::pair<std::string, std::variant<LineValue<int>, LineValue<bool>, LineValue<std::string>, LineValue<std::vector<uint8_t>>>>> &&vec) {
+        Line(bool has_names, std::vector<std::pair<std::string, std::variant<LineValue<int>, LineValue<bool>, LineValue<std::string>, LineValue<ByteString>>>> &&vec) {
             hasNames = has_names;
             values = std::move(vec);
         }
-        std::vector<std::pair<std::string, std::variant<LineValue<int>, LineValue<bool>, LineValue<std::string>, LineValue<std::vector<uint8_t>>>>> values;
+        std::vector<std::pair<std::string, std::variant<LineValue<int>, LineValue<bool>, LineValue<std::string>, LineValue<ByteString>>>> values;
         bool hasNames = false;
     };
 
@@ -90,13 +94,40 @@ namespace memdb {
         C_BYTE=3
     };
 
+
     struct Table {
-        std::vector<std::variant<Column<int>, Column<bool>, Column<std::string>, Column<std::vector<uint8_t>>>> columns;
+        std::vector<std::variant<Column<int>, Column<bool>, Column<std::string>, Column<ByteString>>> columns;
         std::string name;
         int getColumnsCount() const {return columns.size();}
-        Table(std::string &&s, std::vector<std::variant<Column<int>, Column<bool>, Column<std::string>, Column<std::vector<uint8_t>>>> &&vec) {
+        Table(std::string &&s, std::vector<std::variant<Column<int>, Column<bool>, Column<std::string>, Column<ByteString>>> &&vec) {
             name = s;
             columns = std::move(vec);
+        }
+
+        std::string getColumnsNamesString() {
+            std::string s;
+            for (auto &c : columns) {
+                std::cout << c.index() << '\n';
+                switch (c.index()) {
+                    case C_INT: {
+                        s += std::get<C_INT>(c).name + "|";
+                        break;
+                    }
+                    case C_BOOL: {
+                        s += std::get<C_BOOL>(c).name + "|";
+                        break;
+                    }
+                    case C_BYTE: {
+                        s += std::get<C_BYTE>(c).name + '|';
+                        break;
+                    }
+                    case C_STRING: {
+                        s += std::get<C_STRING>(c).name + '|';
+                        break;
+                    }
+                }
+            }
+            return s;
         }
 
         void insert(Line line) {
@@ -183,7 +214,7 @@ namespace memdb {
                             case C_BYTE: {
                                 auto column = std::get<C_BYTE>(column_var);
                                 if (column.name == val.first) {
-                                    if (typeid(val.second) != typeid(std::vector<uint8_t>)) {
+                                    if (typeid(val.second) != typeid(ByteString)) {
                                         throw ExecutionException(
                                                 "invalid type inserting in column " + val.first + "\n");
                                     }
@@ -196,7 +227,7 @@ namespace memdb {
 
                                         column.vector.push_back(column.value);
                                     } else {
-                                        if (std::get<C_BYTE>(val.second).value.size() != column.getLen()) {
+                                        if (std::get<C_BYTE>(val.second).value.str.size() != column.getLen()) {
                                             throw ExecutionException("invalid byte array lenght inserting in column " + val.first + "\n");
                                         }
                                         column.vector.push_back(std::get<C_BYTE>(val.second).value);
@@ -285,11 +316,11 @@ namespace memdb {
 
                                 column.vector.push_back(column.value);
                             } else {
-                                if (typeid(std::get<C_BYTE>(val.second).value) != typeid(std::vector<uint8_t>)) {
+                                if (typeid(std::get<C_BYTE>(val.second).value) != typeid(ByteString)) {
                                     throw ExecutionException("invalid type inserting in column " + column.name + "\n");
                                 }
 
-                                if (std::get<C_BYTE>(val.second).value.size() != column.getLen()) {
+                                if (std::get<C_BYTE>(val.second).value.str.size() != column.getLen()) {
                                     throw ExecutionException("trying to insert byte array with invalid lenght to column " + column.name + "\n");
                                 }
 
@@ -308,10 +339,32 @@ namespace memdb {
     };
 
 
-    class Database {
-        std::vector<Table> tables;
+class Database {
+    std::vector<Table> tables;
 
-    public:
+public:
+
+        std::string getTablesNamesString() {
+            std::string s;
+            for (auto &t : tables) {
+                s += t.name += '|';
+            }
+            return s;
+        }
+        std::string getTablesColumnsString() {
+            std::string s;
+            for (auto &t : tables) {
+                s += (t.getColumnsNamesString() + "\n");
+            }
+            return s;
+        }
+        int getAllColumnsCount() {
+            int i = 0;
+            for (auto &t : tables) {
+                i += t.getColumnsCount();
+            }
+            return i;
+        }
         void addNewTable(Table &&t) {
             tables.push_back(t);
         }
