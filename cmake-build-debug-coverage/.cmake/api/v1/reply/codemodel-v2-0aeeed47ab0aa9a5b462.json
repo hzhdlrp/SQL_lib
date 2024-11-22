@@ -1,0 +1,231 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.26"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"build" : "lib",
+					"childIndexes" : 
+					[
+						2
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-lib-Debug-c12f15c6f888b43a891c.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.26"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "lib",
+					"targetIndexes" : 
+					[
+						5,
+						6
+					]
+				},
+				{
+					"build" : "lib/googletest",
+					"childIndexes" : 
+					[
+						3
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-lib.googletest-Debug-f566c6626c443d7d0c98.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 1,
+					"source" : "lib/googletest"
+				},
+				{
+					"build" : "lib/googletest/googlemock",
+					"childIndexes" : 
+					[
+						4
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-lib.googletest.googlemock-Debug-3d087cce1c40aef5b717.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 2,
+					"projectIndex" : 2,
+					"source" : "lib/googletest/googlemock",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				},
+				{
+					"build" : "lib/googletest/googletest",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-lib.googletest.googletest-Debug-5f7ead710276cd02c3d9.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 3,
+					"source" : "lib/googletest/googletest",
+					"targetIndexes" : 
+					[
+						2,
+						3
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1
+					],
+					"directoryIndexes" : 
+					[
+						0,
+						1
+					],
+					"name" : "SQL_lib",
+					"targetIndexes" : 
+					[
+						4,
+						5,
+						6
+					]
+				},
+				{
+					"childIndexes" : 
+					[
+						2
+					],
+					"directoryIndexes" : 
+					[
+						2
+					],
+					"name" : "googletest-distribution",
+					"parentIndex" : 0
+				},
+				{
+					"childIndexes" : 
+					[
+						3
+					],
+					"directoryIndexes" : 
+					[
+						3
+					],
+					"name" : "gmock",
+					"parentIndex" : 1,
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						4
+					],
+					"name" : "gtest",
+					"parentIndex" : 2,
+					"targetIndexes" : 
+					[
+						2,
+						3
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 3,
+					"id" : "gmock::@7712283c01f504ef6d93",
+					"jsonFile" : "target-gmock-Debug-746fea566b52235c155b.json",
+					"name" : "gmock",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "gmock_main::@7712283c01f504ef6d93",
+					"jsonFile" : "target-gmock_main-Debug-765e1b19517e0d6b9db5.json",
+					"name" : "gmock_main",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "gtest::@7e3677ed2a4dc8c8eb88",
+					"jsonFile" : "target-gtest-Debug-5df0cc7d63c8c63083b1.json",
+					"name" : "gtest",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "gtest_main::@7e3677ed2a4dc8c8eb88",
+					"jsonFile" : "target-gtest_main-Debug-631506924850debed366.json",
+					"name" : "gtest_main",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "main::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-main-Debug-c60c501328e6fe1cf223.json",
+					"name" : "main",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "memdb::@306ed2d68c6501e8728f",
+					"jsonFile" : "target-memdb-Debug-404bda32f57ec868803a.json",
+					"name" : "memdb",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "tests::@306ed2d68c6501e8728f",
+					"jsonFile" : "target-tests-Debug-5b4a250a99e7900dc55b.json",
+					"name" : "tests",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/Users/vadimleonov/Desktop/\u043f\u043b\u044e\u0441\u044b/SQL_lib/cmake-build-debug-coverage",
+		"source" : "/Users/vadimleonov/Desktop/\u043f\u043b\u044e\u0441\u044b/SQL_lib"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 5
+	}
+}

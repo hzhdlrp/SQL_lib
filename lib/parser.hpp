@@ -12,7 +12,7 @@ public:
     virtual std::variant<memdb::Table, std::monostate> execute(memdb::Database &db) = 0;
 };
 
-struct CreateTable : public Query {
+class CreateTable : public Query {
     memdb::Table table;
 public:
     CreateTable(memdb::Table &t) : table(t) {}
@@ -23,8 +23,17 @@ public:
     }
 };
 
-struct Insert : public Query {
+class Insert : public Query {
+    std::string name;
+    memdb::Line line;
+public:
     std::variant<memdb::Table, std::monostate> execute(memdb::Database &db) override {
+        for (auto &t : db.tables) {
+            if (t.name == name) {
+                t.insert(line);
+                return std::monostate{};
+            }
+        }
         return std::monostate{};
     }
 };
@@ -188,6 +197,87 @@ struct Parser {
                 CreateTable createTable(table);
                 return std::make_shared<CreateTable>(createTable);
             }
+        }
+        else if (command_name == "insert") {
+            std::string remained = ss.str();
+            std::regex r(R"(\([*]+\))");
+            std::vector<std::string> values;
+            std::string in_braces;
+            bool by_name = false;
+
+            for (std::smatch sm; regex_search(remained, sm, r);)
+            {
+                in_braces = sm.str() ;
+                remained = sm.suffix();
+            }
+            std::cout << "in (): " << in_braces << "\n remained = " << remained << '\n';
+
+            if (in_braces.find('=')) {
+                by_name = true;
+            }
+
+            for (std::smatch sm; regex_search(in_braces, sm, std::regex("[^,\\(\\)]+")); ) {
+                values.push_back(sm.str());
+                in_braces = sm.suffix();
+            }
+
+            if (by_name) {
+                std::vector<std::string> names;
+                std::vector<std::string> values;
+
+                for (auto &s : values) {
+                    int i = 0;
+                    for (std::smatch sm; regex_search(s, sm, std::regex("[^=\\s]+")); ) {
+                        if (i==0) {
+                            names.push_back(sm.str());
+                            s = sm.suffix();
+                            ++i;
+                        } else {
+                            values.push_back(sm.str());
+                        }
+                    }
+                }
+                for (int i = 0; i < names.size(); ++i) {
+                    std::cout << "name = " << names[i] << "; value = " << values[i] << '\n';
+                } std::cout << '\n';
+
+                using  LineVariant = std::variant<memdb::LineValue<int>, memdb::LineValue<bool>, memdb::LineValue<std::string>, memdb::LineValue<memdb::ByteString>>;
+                std::vector<std::pair<std::string, LineVariant>> vec;
+
+                for (int i = 0; i < names.size(); ++i) {
+                    if (values[i][0] == '\"') {
+                        values[i].erase(std::remove(values[i].begin(), values[i].end(), '\"'), values[i].end());
+
+                        LineVariant variant(memdb::LineValue<std::string>(values[i], false));
+                        vec.push_back(std::pair(names[i], variant));
+                    } else if (values[i][0] == '0' && values[i][1] == 'x') {
+                        LineVariant variant(memdb::LineValue<memdb::ByteString>({values[i]}, false));
+                        vec.push_back(std::pair(names[i], variant));
+                    } else if (values[i] == "true") {
+                        LineVariant variant(memdb::LineValue<bool>(true, false));
+                        vec.push_back(std::pair(names[i], variant));
+                    } else if (values[i] == "false") {
+                        LineVariant variant(memdb::LineValue<bool>(false, false));
+                        vec.push_back(std::pair(names[i], variant));
+                    } else {
+                        for (auto &c : values[i]) {
+                            if (c < '0' || c > '9') {
+                                throw ExecutionException("unknown type of value " + values[i] + "\n");
+                            }
+                            LineVariant variant(memdb::LineValue<int>(std::stoi(values[i]), false));
+                            vec.push_back(std::pair(names[i], variant));
+                        }
+                    }
+
+                    memdb::Line line(true, std::move(vec));
+
+                }
+
+
+            }
+
+
+
         }
     }
 };

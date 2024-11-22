@@ -37,17 +37,27 @@ TEST(createTable, columnsCount) {
     }    ASSERT_EQ(db.getTablesNamesString(), "users|");
 }
 
+TEST(insert, def) {
+
+
+
+    // | <- разделитель имен таблиц в выводе getTablesNamesString()
+}
+
 int main(int argc, char **argv) {
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-//    Database db;
-//    Parser p;
-//    try {
-//        execute(db, p.parse("create table users ({key, autoincrement} id : int32 = 5 , {unique} login : string[32] =\"abcde\", is_admin : bool =  false  )"));
-//    } catch(const std::exception &e) {
-//        std::cerr << "Произошла ошибка: " << e.what() << std::endl;
-//    }
-//    std::cout << db.getTablesColumnsString() << '\n' << db.getTablesNamesString();
+//    testing::InitGoogleTest(&argc, argv);
+//    return RUN_ALL_TESTS();
+    Database db;
+    Parser p;
+    try {
+        execute(db, p.parse("create table users ({key, autoincrement} id : int32 = 5 , {unique} login : string[32] =\"abcde\", is_admin : bool =  false  )"));
+    } catch(const std::exception &e) {
+        std::cerr << "Произошла ошибка: " << e.what() << std::endl;
+    }  try {
+        execute(db, p.parse("insert (,,ajshauo=\"ojob\") psj oashoi saj"));
+    } catch(const std::exception &e) {
+        std::cerr << "Произошла ошибка: " << e.what() << std::endl;
+    }
 
 }
 

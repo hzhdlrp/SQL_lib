@@ -185,7 +185,7 @@ namespace memdb {
             return s;
         }
 
-        void insert(Line line) {
+        void insert(Line &line) {
             if (line.values.size() > columns.size()) throw ExecutionException("inserting more arguments than expected\n");
 
             if (line.hasNames) {
@@ -397,10 +397,8 @@ namespace memdb {
 
 
 #include <iostream>
-class Database {
+struct Database {
     std::vector<Table> tables;
-
-public:
 
         std::string getTablesNamesString() {
             std::string s;
