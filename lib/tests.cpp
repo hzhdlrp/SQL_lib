@@ -13,7 +13,7 @@ TEST(createTable, tablesNames) {
     } catch(const std::exception &e) {
         std::cerr << "Произошла ошибка: " << e.what() << std::endl;
     }    ASSERT_EQ(db.getTablesNamesString(), "users|");
-    // | <- разделитель имен таблиц в выводе getTablesNamesString()
+    // | <- разделитель имен таблиц в выводе
 }
 
 TEST(createTable, columnsNames) {
@@ -25,6 +25,7 @@ TEST(createTable, columnsNames) {
     } catch(const std::exception &e) {
         std::cerr << "Произошла ошибка: " << e.what() << std::endl;
     }    ASSERT_EQ(db.getTablesColumnsString(), "id|login|is_admin|");
+    // | <- разделитель имен столбцов в выводе
 }
 
 TEST(createTable, columnsCount) {
@@ -37,13 +38,7 @@ TEST(createTable, columnsCount) {
     }    ASSERT_EQ(db.getTablesNamesString(), "users|");
 }
 
-TEST(insert, def) {
-
-}
-
-int main(int argc, char **argv) {
-//    testing::InitGoogleTest(&argc, argv);
-//    return RUN_ALL_TESTS();
+TEST(insert, upload) {
     Database db;
     Parser p;
     try {
@@ -57,10 +52,21 @@ int main(int argc, char **argv) {
         std::cerr << "Произошла ошибка: " << e.what() << std::endl;
     }
     try {
-        db.uploadToFile("/Users/vadimleonov/Desktop/плюсы/SQL_lib/lib/file.txt");
+        execute(db, p.parse("insert (id, login = \"mylogin\") to users"));
+    } catch(const ExecutionException &e) {
+        std::cerr << "Произошла ошибка: " << e.what() << std::endl;
+    }
+    try {
+        db.uploadToFile("../../lib/test_uploads/file.txt");
     } catch (const ExecutionException &e) {
         std::cerr << "Произошла ошибка: " << e.what() << std::endl;
     }
+}
+
+int main(int argc, char **argv) {
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+
 
 
 }

@@ -145,7 +145,7 @@ namespace memdb {
                 for (auto &val : line.values) {
                     bool found = false;
                     for (int index = 0; index < columns.size(); ++index) {
-                        auto column_var = columns[index];
+                        auto &column_var = columns[index];
                         switch(column_var.index()){
                             case C_INT: {
                                 auto &column = std::get<C_INT>(column_var);
@@ -262,7 +262,7 @@ namespace memdb {
 
                 for (auto &pair : isUsedColumnNamesByIndex) {
                     if (pair.second == false) {
-                        auto column_var = columns[pair.first];
+                        auto &column_var = columns[pair.first];
                         switch (column_var.index()) {
                             case C_INT:{
                                 auto &col = std::get<C_INT>(column_var);
@@ -329,7 +329,7 @@ namespace memdb {
             } else {
                 for (int i = 0; i < line.values.size(); ++i) {
                     auto val = line.values[i];
-                    auto column_var = columns[i];
+                    auto &column_var = columns[i];
 
                     switch(column_var.index()) {
                         case C_INT: {

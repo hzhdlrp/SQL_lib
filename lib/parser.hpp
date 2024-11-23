@@ -51,10 +51,6 @@ std::string str_tolower(std::string s)
     return s;
 }
 
-
-
-
-
 struct Parser {
     std::shared_ptr<Query> parse(std::string &&string) {
         std::stringstream ss{string};
