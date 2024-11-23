@@ -1,0 +1,90 @@
+TABLE  users :
+
+COLUMN id (type int32):
+
+COLUMN login (type string[32]):
+
+COLUMN is_admin (type bool):
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+
+COLUMN login (type string[32]):
+
+COLUMN is_admin (type bool):
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+
+COLUMN login (type string[32]):
+
+COLUMN is_admin (type bool):
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+
+COLUMN login (type string[32]):
+
+COLUMN is_admin (type bool):
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+
+COLUMN login (type string[32]):
+
+COLUMN is_admin (type bool):
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+
+COLUMN login (type string[32]):
+
+COLUMN is_admin (type bool):
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+
+COLUMN login (type string[32]):
+
+COLUMN is_admin (type bool):
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+
+COLUMN login (type string[32]):
+
+COLUMN is_admin (type bool):
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+
+COLUMN login (type string[32]):
+
+COLUMN is_admin (type bool):
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+
+COLUMN login (type string[32]):
+
+COLUMN is_admin (type bool):
+
+

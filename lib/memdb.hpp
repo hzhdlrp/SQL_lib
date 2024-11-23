@@ -148,7 +148,7 @@ namespace memdb {
                         auto column_var = columns[index];
                         switch(column_var.index()){
                             case C_INT: {
-                                auto column = std::get<C_INT>(column_var);
+                                auto &column = std::get<C_INT>(column_var);
                                 if (column.name == val.first) {
                                     if (typeid(std::get<C_INT>(val.second).value) != typeid(int)) {
                                         throw ExecutionException(
@@ -173,7 +173,7 @@ namespace memdb {
                                 break;
                             }
                             case C_BOOL: {
-                                auto column = std::get<C_BOOL>(column_var);
+                                auto &column = std::get<C_BOOL>(column_var);
                                 if (column.name == val.first) {
                                     if (typeid(std::get<C_BOOL>(val.second).value) != typeid(bool)) {
                                         throw ExecutionException(
@@ -197,7 +197,7 @@ namespace memdb {
                                 break;
                             }
                             case C_STRING: {
-                                auto column = std::get<C_STRING>(column_var);
+                                auto &column = std::get<C_STRING>(column_var);
                                 if (column.name == val.first) {
                                     if (typeid(std::get<C_STRING>(val.second).value) != typeid(std::string)) {
                                         throw ExecutionException(
@@ -224,7 +224,7 @@ namespace memdb {
                                 break;
                             }
                             case C_BYTE: {
-                                auto column = std::get<C_BYTE>(column_var);
+                                auto &column = std::get<C_BYTE>(column_var);
                                 if (column.name == val.first) {
                                     if (typeid(std::get<C_BYTE>(val.second).value) != typeid(ByteString)) {
                                         throw ExecutionException(
@@ -265,7 +265,7 @@ namespace memdb {
                         auto column_var = columns[pair.first];
                         switch (column_var.index()) {
                             case C_INT:{
-                                auto col = std::get<C_INT>(column_var);
+                                auto &col = std::get<C_INT>(column_var);
                                 if (!col.hasDefoltValue) {
                                     if (!col.attributes.autoincrement) {
                                         throw ExecutionException(
@@ -285,7 +285,7 @@ namespace memdb {
                                 break;
                             }
                             case C_BOOL:{
-                                auto col = std::get<C_BOOL>(column_var);
+                                auto &col = std::get<C_BOOL>(column_var);
                                 if (!col.hasDefoltValue) {
 
                                         throw ExecutionException(
@@ -298,7 +298,7 @@ namespace memdb {
 
                             }
                             case C_STRING:{
-                                auto col = std::get<C_STRING>(column_var);
+                                auto &col = std::get<C_STRING>(column_var);
                                 if (!col.hasDefoltValue) {
 
                                     throw ExecutionException(
@@ -311,7 +311,7 @@ namespace memdb {
 
                             }
                             case C_BYTE:{
-                                auto col = std::get<C_BYTE>(column_var);
+                                auto &col = std::get<C_BYTE>(column_var);
                                 if (!col.hasDefoltValue) {
 
                                     throw ExecutionException(
@@ -333,10 +333,10 @@ namespace memdb {
 
                     switch(column_var.index()) {
                         case C_INT: {
-                            auto column = std::get<C_INT>(column_var);
+                            auto &column = std::get<C_INT>(column_var);
                             if (std::get<C_INT>(val.second).defaultValue) {
                                 if (!column.hasDefoltValue) {
-                                    throw ExecutionException("column " + column.name + " as not default value\n");
+                                    throw ExecutionException("column " + name + " as not default value\n");
                                 }
 
                                 column.vector.push_back(column.value);
@@ -350,7 +350,7 @@ namespace memdb {
                             break;
                         }
                         case C_BOOL: {
-                            auto column = std::get<C_BOOL>(column_var);
+                            auto &column = std::get<C_BOOL>(column_var);
                             if (std::get<C_BOOL>(val.second).defaultValue) {
                                 if (!column.hasDefoltValue) {
                                     throw ExecutionException("column " + column.name + " as not default value\n");
@@ -367,7 +367,7 @@ namespace memdb {
                             break;
                         }
                         case C_STRING: {
-                            auto column = std::get<C_STRING>(column_var);
+                            auto &column = std::get<C_STRING>(column_var);
                             if (std::get<C_STRING>(val.second).defaultValue) {
                                 if (!column.hasDefoltValue) {
                                     throw ExecutionException("column " + column.name + " as not default value\n");
@@ -388,7 +388,7 @@ namespace memdb {
                             break;
                         }
                         case C_BYTE: {
-                            auto column = std::get<C_BYTE>(column_var);
+                            auto &column = std::get<C_BYTE>(column_var);
                             if (std::get<C_BYTE>(val.second).defaultValue) {
                                 if (!column.hasDefoltValue) {
                                     throw ExecutionException("column " + column.name + " as not default value\n");
@@ -437,7 +437,7 @@ namespace memdb {
                     for (auto &cv : t.columns) {
                         switch (cv.index()) {
                             case C_INT: {
-                                auto c = std::get<C_INT>(cv);
+                                auto &c = std::get<C_INT>(cv);
                                 out << "COLUMN " << c.name << " (type int32):\n";
                                 for (auto &i : c.vector) {
                                     out << i << '\n';
@@ -446,7 +446,7 @@ namespace memdb {
                                 break;
                             }
                             case C_BOOL: {
-                                auto c = std::get<C_BOOL>(cv);
+                                auto &c = std::get<C_BOOL>(cv);
                                 out << "COLUMN " << c.name << " (type bool):\n";
                                 for (auto i : c.vector) {
                                     out << i << '\n';
@@ -455,7 +455,7 @@ namespace memdb {
                                 break;
                             }
                             case C_STRING: {
-                                auto c = std::get<C_STRING>(cv);
+                                auto &c = std::get<C_STRING>(cv);
                                 out << "COLUMN " << c.name << " (type string[" <<c.getLen()<< "]):\n";
                                 for (auto &i : c.vector) {
                                     out << i << '\n';
@@ -464,7 +464,7 @@ namespace memdb {
                                 break;
                             }
                             case C_BYTE: {
-                                auto c = std::get<C_BYTE>(cv);
+                                auto &c = std::get<C_BYTE>(cv);
                                 out << "COLUMN " << c.name << " (type byte[" <<c.getLen()<< "]):\n";
                                 for (auto &i : c.vector) {
                                     out << i.str << '\n';

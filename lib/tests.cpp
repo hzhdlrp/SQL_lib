@@ -39,9 +39,6 @@ TEST(createTable, columnsCount) {
 
 TEST(insert, def) {
 
-
-
-    // | <- разделитель имен таблиц в выводе getTablesNamesString()
 }
 
 int main(int argc, char **argv) {
