@@ -215,15 +215,12 @@ struct Parser {
                 in_braces = sm.str() ;
                 remained = sm.suffix();
             }
-//            std::cout << "in (): " << in_braces << "\nremained = " << remained << "\n\n";
-
             if (in_braces.find('=')) {
                 by_name = true;
             }
 
             for (std::smatch sm; regex_search(in_braces, sm, std::regex("[^,\\(\\)]+")); ) {
                 names_values.push_back(sm.str());
-//                std::cout << sm.str() << '\n';
                 in_braces = sm.suffix();
             }
 
@@ -232,7 +229,6 @@ struct Parser {
                 std::vector<std::string> values;
 
                 for (auto &s : names_values) {
-//                    std::cout << s << '\n';
                     for (std::smatch sm; regex_search(s, sm, std::regex("=")); ) {
                         names.push_back(sm.prefix());
                         values.push_back(sm.suffix());
@@ -240,7 +236,6 @@ struct Parser {
                     }
                 }
                 for (int i = 0; i < names.size(); ++i) {
-//                    std::cout << "name = " << names[i] << "; value = " << values[i] << '\n';
                 } std::cout << '\n';
 
                 using  LineVariant = std::variant<memdb::LineValue<int>, memdb::LineValue<bool>, memdb::LineValue<std::string>, memdb::LineValue<memdb::ByteString>>;
@@ -280,13 +275,12 @@ struct Parser {
                 std::stringstream ss(remained);
                 std::string table_name;
                 ss >> table_name >> table_name;
-//                std::cout << "table name: " << table_name << '\n';
 
                 Insert insert{table_name, line};
                 return std::make_shared<Insert>(insert);
+            } else {
+
             }
-
-
 
         }
     }
