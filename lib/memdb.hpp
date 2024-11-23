@@ -435,7 +435,6 @@ namespace memdb {
 
             std::ofstream out;
             out.open(file, std::ios::app);
-//            std::cout << file << '\n';
             if (out.is_open()) {
                 for (auto &t : tables) {
                     out <<  "TABLE  " << t.name << " :\n\n";

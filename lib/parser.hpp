@@ -219,12 +219,11 @@ struct Parser {
                 by_name = true;
             }
 
-            for (std::smatch sm; regex_search(in_braces, sm, std::regex("[^,\\(\\)]+")); ) {
-                names_values.push_back(sm.str());
-                in_braces = sm.suffix();
-            }
-
             if (by_name) {
+                for (std::smatch sm; regex_search(in_braces, sm, std::regex("[^,\\(\\)]+")); ) {
+                    names_values.push_back(sm.str());
+                    in_braces = sm.suffix();
+                }
                 std::vector<std::string> names;
                 std::vector<std::string> values;
 
@@ -279,6 +278,10 @@ struct Parser {
                 Insert insert{table_name, line};
                 return std::make_shared<Insert>(insert);
             } else {
+                in_braces.erase(std::remove(in_braces.begin(), in_braces.end(), '('), in_braces.end());
+                in_braces.erase(std::remove(in_braces.begin(), in_braces.end(), ')'), in_braces.end());
+                
+
 
             }
 

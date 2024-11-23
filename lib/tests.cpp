@@ -63,6 +63,9 @@ TEST(insert, upload) {
     }
 }
 
+// ЗАПРЕЩЕНО
+//  использовать в строковых значениях символы ,()
+
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
