@@ -157,12 +157,17 @@ namespace memdb {
 
                                     if (std::get<C_INT>(val.second).defaultValue) {
                                         if (!column.hasDefoltValue) {
-                                            throw ExecutionException(
-                                                    "column " + column.name + " has not default value\n");
+                                            if (!column.attributes.autoincrement) {
+                                                throw ExecutionException(
+                                                        "column " + column.name + " has not default value and autoincrement\n");
+                                            } else {
+                                                if (column.vector.empty()) column.vector.push_back(0);
+                                                else column.vector.push_back(column.vector.back() + 1);
+                                            }
                                         }
 
+
                                         column.vector.push_back(column.value);
-                                        ///TODO(autoinc)
                                     } else {
                                         column.vector.push_back(std::get<C_INT>(val.second).value);
                                     }
@@ -430,7 +435,7 @@ namespace memdb {
 
             std::ofstream out;
             out.open(file, std::ios::app);
-            std::cout << file << '\n';
+//            std::cout << file << '\n';
             if (out.is_open()) {
                 for (auto &t : tables) {
                     out <<  "TABLE  " << t.name << " :\n\n";

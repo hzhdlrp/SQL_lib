@@ -133,11 +133,15 @@ struct Parser {
                             int32_t val;
                             std::stringstream ss1(column_info);
                             ss1 >> val;
-                            columnObjectVariants.emplace_back(memdb::Column<int32_t>(std::move(columnName), std::move(columnAttributes), std::move(val), 0));
+                            auto __col = memdb::Column<int32_t>(std::move(columnName), std::move(columnAttributes), std::move(val), 0);
+                            __col.hasDefoltValue = true;
+                            columnObjectVariants.emplace_back(__col);
                         } else if (columnType == "bool") {
                             bool val = (column_info == "true");
-                            columnObjectVariants.emplace_back(memdb::Column<bool>(std::move(columnName), std::move(columnAttributes), std::move(val),0));
-                        } else {
+                            auto __col = memdb::Column<bool>(std::move(columnName), std::move(columnAttributes), std::move(val),0);
+                            __col.hasDefoltValue = true;
+                            columnObjectVariants.emplace_back(__col);
+                            } else {
                             std::smatch smatch1;
 
                             std::regex_search(columnType, smatch1, std::regex("[^\\[\\]/0-9]+"));
@@ -152,11 +156,15 @@ struct Parser {
                             if (columnType == "string") {
                                 column_info.erase(std::remove(column_info.begin(), column_info.end(), '='), column_info.end());
                                 if (column_info.size() > len) throw ExecutionException("incorrect lenght of default string value\n");
-                                columnObjectVariants.emplace_back(memdb::Column<std::string>(std::move(columnName), std::move(columnAttributes), std::move(column_info), len));
+                                auto __col = memdb::Column<std::string>(std::move(columnName), std::move(columnAttributes), std::move(column_info), len);
+                                __col.hasDefoltValue = true;
+                                columnObjectVariants.emplace_back(__col);
                             } else if (columnType == "bytes") {
                                 if (column_info[0] != '0' || column_info[1] != 'x') throw ExecutionException("byte value must brgin with 0x\n");
                                 if (column_info.size() != len + 2) throw ExecutionException("incorrect lenght of default byte value\n");
-                                columnObjectVariants.emplace_back(memdb::Column<memdb::ByteString>(std::move(columnName), std::move(columnAttributes), memdb::ByteString(column_info),len));
+                                auto __col = memdb::Column<memdb::ByteString>(std::move(columnName), std::move(columnAttributes), memdb::ByteString(column_info),len);
+                                __col.hasDefoltValue = true;
+                                columnObjectVariants.emplace_back(__col);
                             } else {
                                 throw ExecutionException("unknown type " + columnType + "\n");
                             }
@@ -207,7 +215,7 @@ struct Parser {
                 in_braces = sm.str() ;
                 remained = sm.suffix();
             }
-            std::cout << "in (): " << in_braces << "\nremained = " << remained << "\n\n";
+//            std::cout << "in (): " << in_braces << "\nremained = " << remained << "\n\n";
 
             if (in_braces.find('=')) {
                 by_name = true;
@@ -215,7 +223,7 @@ struct Parser {
 
             for (std::smatch sm; regex_search(in_braces, sm, std::regex("[^,\\(\\)]+")); ) {
                 names_values.push_back(sm.str());
-                std::cout << sm.str() << '\n';
+//                std::cout << sm.str() << '\n';
                 in_braces = sm.suffix();
             }
 
@@ -224,7 +232,7 @@ struct Parser {
                 std::vector<std::string> values;
 
                 for (auto &s : names_values) {
-                    std::cout << s << '\n';
+//                    std::cout << s << '\n';
                     for (std::smatch sm; regex_search(s, sm, std::regex("=")); ) {
                         names.push_back(sm.prefix());
                         values.push_back(sm.suffix());
@@ -232,7 +240,7 @@ struct Parser {
                     }
                 }
                 for (int i = 0; i < names.size(); ++i) {
-                    std::cout << "name = " << names[i] << "; value = " << values[i] << '\n';
+//                    std::cout << "name = " << names[i] << "; value = " << values[i] << '\n';
                 } std::cout << '\n';
 
                 using  LineVariant = std::variant<memdb::LineValue<int>, memdb::LineValue<bool>, memdb::LineValue<std::string>, memdb::LineValue<memdb::ByteString>>;
@@ -272,7 +280,7 @@ struct Parser {
                 std::stringstream ss(remained);
                 std::string table_name;
                 ss >> table_name >> table_name;
-                std::cout << "table name: " << table_name << '\n';
+//                std::cout << "table name: " << table_name << '\n';
 
                 Insert insert{table_name, line};
                 return std::make_shared<Insert>(insert);
