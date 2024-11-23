@@ -27,6 +27,7 @@ class Insert : public Query {
     std::string name;
     memdb::Line line;
 public:
+    Insert(std::string  &s, memdb::Line &l) : name(s), line(l) {}
     std::variant<memdb::Table, std::monostate> execute(memdb::Database &db) override {
         for (auto &t : db.tables) {
             if (t.name == name) {
@@ -200,8 +201,8 @@ struct Parser {
         }
         else if (command_name == "insert") {
             std::string remained = ss.str();
-            std::regex r(R"(\([*]+\))");
-            std::vector<std::string> values;
+            std::regex r(R"(\(([^()]+)\))");
+            std::vector<std::string> names_values;
             std::string in_braces;
             bool by_name = false;
 
@@ -210,14 +211,15 @@ struct Parser {
                 in_braces = sm.str() ;
                 remained = sm.suffix();
             }
-            std::cout << "in (): " << in_braces << "\n remained = " << remained << '\n';
+            std::cout << "in (): " << in_braces << "\nremained = " << remained << "\n\n";
 
             if (in_braces.find('=')) {
                 by_name = true;
             }
 
             for (std::smatch sm; regex_search(in_braces, sm, std::regex("[^,\\(\\)]+")); ) {
-                values.push_back(sm.str());
+                names_values.push_back(sm.str());
+                std::cout << sm.str() << '\n';
                 in_braces = sm.suffix();
             }
 
@@ -225,16 +227,12 @@ struct Parser {
                 std::vector<std::string> names;
                 std::vector<std::string> values;
 
-                for (auto &s : values) {
-                    int i = 0;
-                    for (std::smatch sm; regex_search(s, sm, std::regex("[^=\\s]+")); ) {
-                        if (i==0) {
-                            names.push_back(sm.str());
-                            s = sm.suffix();
-                            ++i;
-                        } else {
-                            values.push_back(sm.str());
-                        }
+                for (auto &s : names_values) {
+                    std::cout << s << '\n';
+                    for (std::smatch sm; regex_search(s, sm, std::regex("=")); ) {
+                        names.push_back(sm.prefix());
+                        values.push_back(sm.suffix());
+                        break;
                     }
                 }
                 for (int i = 0; i < names.size(); ++i) {
@@ -243,8 +241,10 @@ struct Parser {
 
                 using  LineVariant = std::variant<memdb::LineValue<int>, memdb::LineValue<bool>, memdb::LineValue<std::string>, memdb::LineValue<memdb::ByteString>>;
                 std::vector<std::pair<std::string, LineVariant>> vec;
-
                 for (int i = 0; i < names.size(); ++i) {
+                    values[i].erase(std::remove(values[i].begin(), values[i].end(), ' '), values[i].end());
+                    names[i].erase(std::remove(names[i].begin(), names[i].end(), ' '), names[i].end());
+
                     if (values[i][0] == '\"') {
                         values[i].erase(std::remove(values[i].begin(), values[i].end(), '\"'), values[i].end());
 
@@ -264,16 +264,22 @@ struct Parser {
                             if (c < '0' || c > '9') {
                                 throw ExecutionException("unknown type of value " + values[i] + "\n");
                             }
-                            LineVariant variant(memdb::LineValue<int>(std::stoi(values[i]), false));
+                            LineVariant variant(memdb::LineValue<int32_t>(std::stoi(values[i]), false));
                             vec.push_back(std::pair(names[i], variant));
                         }
                     }
 
-                    memdb::Line line(true, std::move(vec));
 
                 }
 
+                memdb::Line line(true, std::move(vec));
+                std::stringstream ss(remained);
+                std::string table_name;
+                ss >> table_name >> table_name;
+                std::cout << "table name: " << table_name << '\n';
 
+                Insert insert{table_name, line};
+                return std::make_shared<Insert>(insert);
             }
 
 

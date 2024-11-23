@@ -5,6 +5,8 @@
 #include <variant>
 #include <exception>
 #include <iostream>
+#include <map>
+#include <fstream>
 
 class ExecutionException : std::exception
 {
@@ -57,44 +59,7 @@ namespace memdb {
             len = l;
             type = typeid(T).name();
         };
-        Column(const Column &c) {
-            name = c.name;
-            attributes = c.attributes;
-            len = c.getLen();
-            type = c.getType();
-            value = c.value;
-            vector = c.vector;
-            hasDefoltValue = c.hasDefoltValue;
 
-        }
-        Column(Column &&c) {
-            name = c.name;
-            attributes = c.attributes;
-            len = c.getLen();
-            type = c.getType();
-            value = c.value;
-            vector = c.vector;
-            hasDefoltValue = c.hasDefoltValue;
-
-        }
-        void operator=(const Column &c) {
-            name = c.name;
-            attributes = c.attributes;
-            len = c.getLen();
-            type = c.getType();
-            value = c.value;
-            vector = c.vector;
-            hasDefoltValue = c.hasDefoltValue;
-        }
-        void operator=(Column &&c) {
-            name = c.name;
-            attributes = c.attributes;
-            len = c.getLen();
-            type = c.getType();
-            value = c.value;
-            vector = c.vector;
-            hasDefoltValue = c.hasDefoltValue;
-        }
         std::vector<T> vector;
         T value;
         bool hasDefoltValue = false;
@@ -134,6 +99,8 @@ namespace memdb {
     };
 
 
+
+
     struct Table {
         std::vector<std::variant<Column<int>, Column<bool>, Column<std::string>, Column<ByteString>>> columns;
         std::string name;
@@ -141,23 +108,6 @@ namespace memdb {
         Table(std::string &&s, std::vector<std::variant<Column<int>, Column<bool>, Column<std::string>, Column<ByteString>>> &&vec) {
             name = s;
             columns = std::move(vec);
-        }
-
-        Table(const Table &t) {
-            columns = t.columns;
-            name = t.name;
-        }
-        Table(Table &&t) {
-            columns = t.columns;
-            name = t.name;
-        }
-        void operator=(const Table& t) {
-            columns = t.columns;
-            name = t.name;
-        }
-        void operator=(Table&& t) {
-            columns = t.columns;
-            name = t.name;
         }
 
         std::string getColumnsNamesString() {
@@ -187,17 +137,20 @@ namespace memdb {
 
         void insert(Line &line) {
             if (line.values.size() > columns.size()) throw ExecutionException("inserting more arguments than expected\n");
-
             if (line.hasNames) {
+                std::map<int, bool> isUsedColumnNamesByIndex;
+                for (int i = 0; i < columns.size(); ++i) {
+                    isUsedColumnNamesByIndex[i] = false;
+                }
                 for (auto &val : line.values) {
                     bool found = false;
-                    for (auto column_var : columns) {
-
+                    for (int index = 0; index < columns.size(); ++index) {
+                        auto column_var = columns[index];
                         switch(column_var.index()){
                             case C_INT: {
                                 auto column = std::get<C_INT>(column_var);
                                 if (column.name == val.first) {
-                                    if (typeid(val.second) != typeid(int)) {
+                                    if (typeid(std::get<C_INT>(val.second).value) != typeid(int)) {
                                         throw ExecutionException(
                                                 "invalid type inserting in column " + val.first + "\n");
                                     }
@@ -209,18 +162,20 @@ namespace memdb {
                                         }
 
                                         column.vector.push_back(column.value);
+                                        ///TODO(autoinc)
                                     } else {
                                         column.vector.push_back(std::get<C_INT>(val.second).value);
                                     }
 
                                     found = true;
+                                    isUsedColumnNamesByIndex[index] = true;
                                 }
                                 break;
                             }
                             case C_BOOL: {
                                 auto column = std::get<C_BOOL>(column_var);
                                 if (column.name == val.first) {
-                                    if (typeid(val.second) != typeid(bool)) {
+                                    if (typeid(std::get<C_BOOL>(val.second).value) != typeid(bool)) {
                                         throw ExecutionException(
                                                 "invalid type inserting in column " + val.first + "\n");
                                     }
@@ -237,13 +192,14 @@ namespace memdb {
                                     }
 
                                     found = true;
+                                    isUsedColumnNamesByIndex[index] = true;
                                 }
                                 break;
                             }
                             case C_STRING: {
                                 auto column = std::get<C_STRING>(column_var);
                                 if (column.name == val.first) {
-                                    if (typeid(val.second) != typeid(std::string)) {
+                                    if (typeid(std::get<C_STRING>(val.second).value) != typeid(std::string)) {
                                         throw ExecutionException(
                                                 "invalid type inserting in column " + val.first + "\n");
                                     }
@@ -262,6 +218,7 @@ namespace memdb {
                                         column.vector.push_back(std::get<C_STRING>(val.second).value);
                                     }
 
+                                    isUsedColumnNamesByIndex[index] = true;
                                     found = true;
                                 }
                                 break;
@@ -269,7 +226,7 @@ namespace memdb {
                             case C_BYTE: {
                                 auto column = std::get<C_BYTE>(column_var);
                                 if (column.name == val.first) {
-                                    if (typeid(val.second) != typeid(ByteString)) {
+                                    if (typeid(std::get<C_BYTE>(val.second).value) != typeid(ByteString)) {
                                         throw ExecutionException(
                                                 "invalid type inserting in column " + val.first + "\n");
                                     }
@@ -288,6 +245,7 @@ namespace memdb {
                                         column.vector.push_back(std::get<C_BYTE>(val.second).value);
                                     }
 
+                                    isUsedColumnNamesByIndex[index] = true;
                                     found = true;
                                 }
                                 break;
@@ -300,6 +258,73 @@ namespace memdb {
                     }
 
                     if (!found) throw ExecutionException("no column with name " + val.first + "\n");
+                }
+
+                for (auto &pair : isUsedColumnNamesByIndex) {
+                    if (pair.second == false) {
+                        auto column_var = columns[pair.first];
+                        switch (column_var.index()) {
+                            case C_INT:{
+                                auto col = std::get<C_INT>(column_var);
+                                if (!col.hasDefoltValue) {
+                                    if (!col.attributes.autoincrement) {
+                                        throw ExecutionException(
+                                                col.name + " has not default value and autoincrement\n");
+                                    } else {
+
+                                        if (col.vector.empty()) {
+                                            col.vector.push_back(0);
+
+                                        } else {
+                                            col.vector.push_back(col.vector.back() + 1);
+                                        }
+                                    }
+                                } else {
+                                    col.vector.push_back(col.value);
+                                }
+                                break;
+                            }
+                            case C_BOOL:{
+                                auto col = std::get<C_BOOL>(column_var);
+                                if (!col.hasDefoltValue) {
+
+                                        throw ExecutionException(
+                                                col.name + " has not default value and autoincrement\n");
+
+                                } else {
+                                    col.vector.push_back(col.value);
+                                }
+                                break;
+
+                            }
+                            case C_STRING:{
+                                auto col = std::get<C_STRING>(column_var);
+                                if (!col.hasDefoltValue) {
+
+                                    throw ExecutionException(
+                                            col.name + " has not default value and autoincrement\n");
+
+                                } else {
+                                    col.vector.push_back(col.value);
+                                }
+                                break;
+
+                            }
+                            case C_BYTE:{
+                                auto col = std::get<C_BYTE>(column_var);
+                                if (!col.hasDefoltValue) {
+
+                                    throw ExecutionException(
+                                            col.name + " has not default value and autoincrement\n");
+
+                                } else {
+                                    col.vector.push_back(col.value);
+                                }
+                                break;
+
+                            }
+                        }
+                    }
                 }
             } else {
                 for (int i = 0; i < line.values.size(); ++i) {
@@ -396,9 +421,67 @@ namespace memdb {
 
 
 
-#include <iostream>
-struct Database {
-    std::vector<Table> tables;
+
+
+    struct Database {
+        std::vector<Table> tables;
+
+        void uploadToFile(std::string &&file) {
+
+            std::ofstream out;
+            out.open(file, std::ios::app);
+            std::cout << file << '\n';
+            if (out.is_open()) {
+                for (auto &t : tables) {
+                    out <<  "TABLE  " << t.name << " :\n\n";
+                    for (auto &cv : t.columns) {
+                        switch (cv.index()) {
+                            case C_INT: {
+                                auto c = std::get<C_INT>(cv);
+                                out << "COLUMN " << c.name << " (type int32):\n";
+                                for (auto &i : c.vector) {
+                                    out << i << '\n';
+                                }
+                                out << '\n';
+                                break;
+                            }
+                            case C_BOOL: {
+                                auto c = std::get<C_BOOL>(cv);
+                                out << "COLUMN " << c.name << " (type bool):\n";
+                                for (auto i : c.vector) {
+                                    out << i << '\n';
+                                }
+                                out << '\n';
+                                break;
+                            }
+                            case C_STRING: {
+                                auto c = std::get<C_STRING>(cv);
+                                out << "COLUMN " << c.name << " (type string[" <<c.getLen()<< "]):\n";
+                                for (auto &i : c.vector) {
+                                    out << i << '\n';
+                                }
+                                out << '\n';
+                                break;
+                            }
+                            case C_BYTE: {
+                                auto c = std::get<C_BYTE>(cv);
+                                out << "COLUMN " << c.name << " (type byte[" <<c.getLen()<< "]):\n";
+                                for (auto &i : c.vector) {
+                                    out << i.str << '\n';
+                                }
+                                out << '\n';
+                                break;
+                            }
+                        }
+                    }
+                    out << '\n';
+                }
+            } else {
+                throw ExecutionException("can not open file" + file + "\n");
+            }
+            out.close();
+        }
+
 
         std::string getTablesNamesString() {
             std::string s;

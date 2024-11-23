@@ -51,13 +51,20 @@ int main(int argc, char **argv) {
     Parser p;
     try {
         execute(db, p.parse("create table users ({key, autoincrement} id : int32 = 5 , {unique} login : string[32] =\"abcde\", is_admin : bool =  false  )"));
-    } catch(const std::exception &e) {
-        std::cerr << "Произошла ошибка: " << e.what() << std::endl;
-    }  try {
-        execute(db, p.parse("insert (,,ajshauo=\"ojob\") psj oashoi saj"));
-    } catch(const std::exception &e) {
+    } catch(const ExecutionException &e) {
         std::cerr << "Произошла ошибка: " << e.what() << std::endl;
     }
+    try {
+        execute(db, p.parse("insert (login = \"agent007\", is_admin = true) to users"));
+    } catch(const ExecutionException &e) {
+        std::cerr << "Произошла ошибка: " << e.what() << std::endl;
+    }
+    try {
+        db.uploadToFile("/Users/vadimleonov/Desktop/плюсы/SQL_lib/lib/file.txt");
+    } catch (const ExecutionException &e) {
+        std::cerr << "Произошла ошибка: " << e.what() << std::endl;
+    }
+
 
 }
 
