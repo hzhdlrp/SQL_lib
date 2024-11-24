@@ -35,6 +35,25 @@ public:
                 return std::monostate{};
             }
         }
+        throw ExecutionException("can not find table with name " + name + "\n");
+        return std::monostate{};
+    }
+};
+
+class Select : public Query {
+    std::string table_name;
+    std::vector<std::string> columns_names;
+    std::string condition;
+
+public:
+    Select(std::string &tn, std::vector<std::string> &cn, std::string &cnd) : table_name(tn), columns_names(cn), condition(cnd) {}
+    std::variant<memdb::Table, std::monostate> execute(memdb::Database &db) override {
+        for (auto &t : db.tables) {
+            if (t.name == table_name) {
+                return t.select(columns_names, condition);
+            }
+        }
+        throw ExecutionException("can not find table with name " + table_name + "\n");
         return std::monostate{};
     }
 };
@@ -70,6 +89,11 @@ struct Parser {
         else if (command_name == "insert") {
             std::string remained = ss.str();
             return insertQueryParse(remained);
+        }
+
+        else if (command_name == "select") {
+            std::string remained = ss.str();
+            return selectQueryParse(remained);
         }
     }
 private:
@@ -233,6 +257,37 @@ private:
         return std::make_shared<CreateTable>(createTable);
     }
 
+    std::shared_ptr<Query> selectQueryParse(std::string &remained) {
+        std::string columns_list;
+        for (std::smatch sm; regex_search(remained, sm, std::regex("from"));) {
+            columns_list = sm.prefix();
+            remained = sm.suffix();
+            break;
+        }
+
+        std::vector<std::string> columns_names;
+        for (std::smatch sm; regex_search(columns_list, sm, std::regex(","));) {
+            columns_names.push_back(sm.prefix());
+            columns_list = sm.suffix();
+        }
+
+        for (auto &s: columns_names) {
+            s.erase(std::remove(s.begin(), s.end(), ' '), s.end());
+        }
+
+        std::string table_name;
+        std::string condition;
+        for (std::smatch sm; regex_search(remained, sm, std::regex("where"));) {
+            table_name = sm.prefix();
+            condition = sm.suffix();
+            break;
+        }
+        table_name.erase(std::remove(table_name.begin(), table_name.end(), ' '), table_name.end());
+
+        Select select(table_name, columns_names, condition);
+        return std::make_shared<Select>(select);
+    }
+
     std::shared_ptr<Query> namedInsert(std::string &in_braces, std::string &remained) {
         std::vector<std::string> names_values;
         for (std::smatch sm; regex_search(in_braces, sm, std::regex("[^,\\(\\)]+")); ) {
@@ -303,7 +358,6 @@ private:
         for (std::smatch sm; regex_search(in_braces, sm, std::regex(",")); ) {
             values.push_back(sm.prefix());
             in_braces = sm.suffix();
-            break;
         }
 
         for (auto &s:values) {
