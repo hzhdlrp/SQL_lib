@@ -33,7 +33,7 @@ namespace conditions {
         if (input >= '0' && input <= '9' ||
             input >= 'a' && input <= 'z' ||
             input >= 'A' && input <= 'Z' ||
-            input == '\"') return true;
+            input == '\"' || input == '_' || input == '-') return true;
         return false;
     }
 
@@ -73,6 +73,7 @@ namespace conditions {
         }
 
         std::set<std::string> getVariablesNames() {
+            make_tokens_sequence();
             makeVariablesSet();
             return variables;
         }
@@ -87,6 +88,138 @@ namespace conditions {
                     t = map[t];
                 }
             }
+        }
+
+        std::variant<int32_t, bool, std::string> eval(const Expression& e) {
+            // на самом деле байтовая последовательность в таблице тоже хранится как строка
+
+            switch (e.args.size()) {
+                case 2: {
+                    auto a_v = eval(e.args[0]);
+                    auto b_v = eval(e.args[1]);
+                    if (a_v.index() != b_v.index())
+                        throw std::runtime_error("types mismatching\n");
+                    switch (a_v.index()) {
+                        case INT :{
+                            auto &a = std::get<INT>(a_v);
+                            auto &b = std::get<INT>(b_v);
+
+                            if (e.token == "+") return a + b;
+                            if (e.token == "-") return a - b;
+                            if (e.token == "*") return a * b;
+                            if (e.token == "/") return a / b;
+                            if (e.token == "%") return a % b;
+                            if (e.token == ">") return a > b;
+                            if (e.token == "<") return a < b;
+                            if (e.token == ">=") return a >= b;
+                            if (e.token == "<=") return a <= b;
+                            if (e.token == "==") return a == b;
+                            if (e.token == "!=") return a != b;
+                            throw std::runtime_error("Unknown binary operator " + e.token + " for int operands\n");
+                            break;
+                        }
+                        case BOOL :{
+                            auto &a = std::get<BOOL>(a_v);
+                            auto &b = std::get<BOOL>(b_v);
+
+                            if (e.token == ">") {
+                                if (a && !b) return true;
+                                return false;
+                            }
+                            if (e.token == "<") {
+                                if (!a && b) return true;
+                                return false;
+                            }
+                            if (e.token == ">=") {
+                                if (!a && b) return false;
+                                return true;
+                            }
+                            if (e.token == "<=") {
+                                if (a && !b) return false;
+                                return true;
+                            }
+                            if (e.token == "==") return a == b;
+                            if (e.token == "!=") return a != b;
+                            if (e.token == "&&") return a && b;
+                            if (e.token == "||") return a || b;
+                            if (e.token == "^^") return (a == b ? false : true);
+                            throw std::runtime_error("Unknown binary operator " + e.token + " for bool operands\n");
+                            break;
+                        }
+                        case STRING: {
+                            std::string &a = std::get<STRING>(a_v);
+                            std::string &b = std::get<STRING>(b_v);
+
+                            if (a[0] == '\"') {
+                                if (b[0] == '\"') {
+
+                                    size_t start {a.find("\"")};
+                                    while (start != std::string::npos)
+                                    {
+                                        a.erase(start, 1);
+                                        start = a.find("\"", start + 1);
+                                    }
+                                    size_t bstart {b.find("\"")};
+                                    while (bstart != std::string::npos)
+                                    {
+                                        b.erase(bstart, 1);
+                                        bstart = b.find("\"", bstart + 1);
+                                    }
+//                                    a.erase(std::remove(a.begin(), a.end(), '\"'), a.end());
+//                                    b.erase(std::remove(b.begin(), b.end(), '\"'), b.end());
+
+                                    if (e.token == "+") {
+                                        return "\"" + a + b + "\"";
+                                    }
+                                    throw std::runtime_error("Unknown binary operator " + e.token + " for string operands\n");
+                                    break;
+
+                                }
+                                throw std::runtime_error("types mismatching\n");
+                            } else {
+                                throw std::runtime_error("Unknown binary operator " + e.token + " for (maybe byte type idk) operands\n");
+                            }
+                            break;
+                        }
+                            break;
+                    }
+
+                }
+
+                case 1: {
+                    auto a_v = eval(e.args[0]);
+                    switch (a_v.index()) {
+                        case INT: {
+                            auto &a = std::get<INT>(a_v);
+                            if (e.token == "+") return +a;
+                            if (e.token == "-") return -a;
+                            throw std::runtime_error("Unknown unary operator " + e.token + " for int operand\n");
+                            break;
+                        }
+                        case BOOL: {
+                            auto &a = std::get<INT>(a_v);
+                            if (e.token == "!") return !a;
+                            throw std::runtime_error("Unknown unary operator " + e.token + " for bool operand\n");
+                            break;
+                        }
+                        case STRING: {
+                            auto &a = std::get<STRING>(a_v);
+                            if (e.token == "|") return int32_t(a.size()) - 2;
+                            throw std::runtime_error("Unknown unary operator " + e.token + " for string operand\n");
+                            break;
+                        }
+                    }
+                }
+
+                case 0: {
+                    if (e.token == "true") return true;
+                    if (e.token == "false") return false;
+                    if (isNumber(e.token)) return std::stoi(e.token);
+                    return e.token;
+                }
+            }
+
+            throw std::runtime_error("Unknown expression type");
         }
     private:
         int index = 0;
@@ -181,14 +314,14 @@ namespace conditions {
                 return Expression(token);
 
             if (token == "(") {
-                auto result = Expression("|", parse());
+                auto result = parse();
                 if (index >= tokens_sequence.size() || tokens_sequence[index] != ")") throw std::runtime_error("Expected ')'");
                 ++index;
                 return result; // Если это скобки, парсим и возвращаем выражение в скобках
             }
 
             if (token == "|o") {
-                auto result = parse();
+                auto result = Expression("|", parse());
                 if (index >= tokens_sequence.size() || tokens_sequence[index] != "|c") throw std::runtime_error("Expected '|'");
                 ++index;
                 return result;
@@ -205,125 +338,6 @@ namespace conditions {
             BOOL = 1,
             STRING = 2
         };
-
-        std::variant<int32_t, bool, std::string> eval(const Expression& e) {
-            // на самом деле байтовая последовательность в таблице тоже хранится как строка
-
-            switch (e.args.size()) {
-                case 2: {
-                    auto a_v = eval(e.args[0]);
-                    auto b_v = eval(e.args[1]);
-                    if (a_v.index() != b_v.index())
-                        throw std::runtime_error("types mismatching\n");
-                    switch (a_v.index()) {
-                        case INT :{
-                            auto &a = std::get<INT>(a_v);
-                            auto &b = std::get<INT>(b_v);
-
-                            if (e.token == "+") return a + b;
-                            if (e.token == "-") return a - b;
-                            if (e.token == "*") return a * b;
-                            if (e.token == "/") return a / b;
-                            if (e.token == "%") return a % b;
-                            if (e.token == ">") return a > b;
-                            if (e.token == "<") return a < b;
-                            if (e.token == ">=") return a >= b;
-                            if (e.token == "<=") return a <= b;
-                            if (e.token == "==") return a == b;
-                            if (e.token == "!=") return a != b;
-                            throw std::runtime_error("Unknown binary operator " + e.token + " for int operands\n");
-                            break;
-                        }
-                        case BOOL :{
-                            auto &a = std::get<BOOL>(a_v);
-                            auto &b = std::get<BOOL>(b_v);
-
-                            if (e.token == ">") {
-                                if (a && !b) return true;
-                                return false;
-                            }
-                            if (e.token == "<") {
-                                if (!a && b) return true;
-                                return false;
-                            }
-                            if (e.token == ">=") {
-                                if (!a && b) return false;
-                                return true;
-                            }
-                            if (e.token == "<=") {
-                                if (a && !b) return false;
-                                return true;
-                            }
-                            if (e.token == "==") return a == b;
-                            if (e.token == "!=") return a != b;
-                            if (e.token == "&&") return a && b;
-                            if (e.token == "||") return a || b;
-                            if (e.token == "^^") return (a == b ? false : true);
-                            throw std::runtime_error("Unknown binary operator " + e.token + " for bool operands\n");
-                            break;
-                        }
-                        case STRING: {
-                            auto &a = std::get<STRING>(a_v);
-                            auto &b = std::get<STRING>(b_v);
-
-                            if (a[0] == '\"') {
-                                if (b[0] == '\"') {
-                                    a.erase(std::remove(a.begin(), a.end(), '\"'), a.end());
-                                    b.erase(std::remove(b.begin(), b.end(), ' '), b.end());
-
-                                    if (e.token == "+") {
-                                        return "\"" + a + b + "\"";
-                                    }
-                                    throw std::runtime_error("Unknown binary operator " + e.token + " for string operands\n");
-                                    break;
-
-                                }
-                                throw std::runtime_error("types mismatching\n");
-                            } else {
-                                throw std::runtime_error("Unknown binary operator " + e.token + " for (maybe byte type idk) operands\n");
-                            }
-                            break;
-                        }
-                        break;
-                    }
-
-                }
-
-                case 1: {
-                    auto a_v = eval(e.args[0]);
-                    switch (a_v.index()) {
-                        case INT: {
-                            auto &a = std::get<INT>(a_v);
-                            if (e.token == "+") return +a;
-                            if (e.token == "-") return -a;
-                            throw std::runtime_error("Unknown unary operator " + e.token + " for int operand\n");
-                            break;
-                        }
-                        case BOOL: {
-                            auto &a = std::get<INT>(a_v);
-                            if (e.token == "!") return !a;
-                            throw std::runtime_error("Unknown unary operator " + e.token + " for bool operand\n");
-                            break;
-                        }
-                        case STRING: {
-                            auto &a = std::get<STRING>(a_v);
-                            if (e.token == "|") return int32_t(a.size()) - 2;
-                            throw std::runtime_error("Unknown unary operator " + e.token + " for string operand\n");
-                            break;
-                        }
-                    }
-                }
-
-                case 0: {
-                    if (e.token == "true") return true;
-                    if (e.token == "false") return false;
-                    if (isNumber(e.token)) return std::stoi(e.token);
-                    return e.token;
-                }
-            }
-
-            throw std::runtime_error("Unknown expression type");
-        }
 
     };
 

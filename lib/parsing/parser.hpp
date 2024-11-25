@@ -54,12 +54,11 @@ public:
             }
         }
         throw ExecutionException("can not find table with name " + table_name + "\n");
-        return std::monostate{};
     }
 };
 
-void execute(memdb::Database &db, const std::shared_ptr<Query>& q) {
-    q->execute(db);
+std::variant<memdb::Table, std::monostate> execute(memdb::Database &db, const std::shared_ptr<Query>& q) {
+    return q->execute(db);
 }
 
 std::string str_tolower(std::string s)
@@ -93,6 +92,9 @@ struct Parser {
 
         else if (command_name == "select") {
             std::string remained = ss.str();
+
+            size_t start {remained.find(command_name)};
+            remained.erase(start, command_name.size());
             return selectQueryParse(remained);
         }
     }

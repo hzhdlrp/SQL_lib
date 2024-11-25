@@ -1,0 +1,225 @@
+TABLE  users :
+
+COLUMN id (type int32):
+5
+5
+
+COLUMN login (type string[32]):
+agent007
+mylogin
+
+COLUMN is_admin (type bool):
+1
+0
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+5
+5
+
+COLUMN login (type string[32]):
+agent007
+mylogin
+
+COLUMN is_admin (type bool):
+1
+0
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+5
+5
+
+COLUMN login (type string[32]):
+agent007
+mylogin
+
+COLUMN is_admin (type bool):
+1
+0
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+5
+5
+
+COLUMN login (type string[32]):
+agent007
+mylogin
+
+COLUMN is_admin (type bool):
+1
+0
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+5
+5
+
+COLUMN login (type string[32]):
+agent007
+mylogin
+
+COLUMN is_admin (type bool):
+1
+0
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+5
+5
+
+COLUMN login (type string[32]):
+agent007
+mylogin
+
+COLUMN is_admin (type bool):
+1
+0
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+5
+5
+
+COLUMN login (type string[32]):
+agent007
+mylogin
+
+COLUMN is_admin (type bool):
+1
+0
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+5
+5
+
+COLUMN login (type string[32]):
+agent007
+mylogin
+
+COLUMN is_admin (type bool):
+1
+0
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+5
+5
+
+COLUMN login (type string[32]):
+agent007
+mylogin
+
+COLUMN is_admin (type bool):
+1
+0
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+5
+5
+
+COLUMN login (type string[32]):
+agent007
+mylogin
+
+COLUMN is_admin (type bool):
+1
+0
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+5
+5
+
+COLUMN login (type string[32]):
+agent007
+mylogin
+
+COLUMN is_admin (type bool):
+1
+0
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+5
+5
+
+COLUMN login (type string[32]):
+agent007
+mylogin
+
+COLUMN is_admin (type bool):
+1
+0
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+5
+5
+
+COLUMN login (type string[32]):
+agent007
+mylogin
+
+COLUMN is_admin (type bool):
+1
+0
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+5
+5
+
+COLUMN login (type string[32]):
+agent007
+mylogin
+
+COLUMN is_admin (type bool):
+1
+0
+
+
+TABLE  users :
+
+COLUMN id (type int32):
+5
+5
+
+COLUMN login (type string[32]):
+agent007
+mylogin
+
+COLUMN is_admin (type bool):
+1
+0
+
+

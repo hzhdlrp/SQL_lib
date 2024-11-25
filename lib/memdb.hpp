@@ -9,6 +9,7 @@
 #include <fstream>
 #include <set>
 #include <cstring>
+#include <sstream>
 #include "parsing/conditions.hpp"
 
 class ExecutionException : std::exception
@@ -166,15 +167,59 @@ namespace memdb {
             } else {
                 unnamedInsert(line);
             }
+            ++high;
         }
 
         Table select(std::vector<std::string> &columns_names, std::string &condition) {
             Table temporary = copyWithEmptyColumns(columns_names);
+            auto indexes = rowNumbersByCondition(condition);
 
+            for (std::string &str : columns_names) {
+                auto &cv_t = temporary.findColumnByName(str);
+                auto &cv = findColumnByName(str);
 
+                switch (cv.index()) {
+                    case C_INT: {
+                        for (int i : indexes) {
+                            std::get<C_INT>(cv_t).vector.push_back(std::get<C_INT>(cv).vector[i]);
+                        }
+                        break;
+                    }
+                    case C_BOOL: {
+                        for (int i : indexes) {
+                            std::get<C_BOOL>(cv_t).vector.push_back(std::get<C_BOOL>(cv).vector[i]);
+                        }
+                        break;
+                    }
+                    case C_STRING: {
+                        for (int i : indexes) {
+                            std::get<C_STRING>(cv_t).vector.push_back(std::get<C_STRING>(cv).vector[i]);
+                        }
+                        break;
+                    }
+                    case C_BYTE: {
+                        for (int i : indexes) {
+                            std::get<C_BYTE>(cv_t).vector.push_back(std::get<C_BYTE>(cv).vector[i]);
+                        }
+                        break;
+                    }
+                }
+            }
+
+            return temporary;
         }
 
     private:
+        template <typename T>
+        std::string toString(T a) {
+            std::stringstream ss("");
+            ss << a;
+            return ss.str();
+        }
+        std::string toString(ByteString a) {
+            return a.str;
+        }
+
         void namedInsert(Line &line) {
             std::map<int, bool> isUsedColumnNamesByIndex;
             for (int i = 0; i < columns.size(); ++i) {
@@ -552,10 +597,120 @@ namespace memdb {
             throw ExecutionException("can not find column with name " + _name + "\n");
         };
 
-        std::vector<int> rowNumbersByCondetion(std::string &condition) {
+        std::vector<int> rowNumbersByCondition(std::string &condition) {
+            char condition_arr[condition.size() + 1];
+            for (int i = 0; i < condition.size(); ++i) {
+                condition_arr[i] = condition[i];
+            }
+            condition_arr[condition.size()] = '\0';
+            conditions::Parser p(condition_arr);
 
+            std::set<std::string> requiredColumns = p.getVariablesNames();
+            std::vector<int> columnIndexes;
+            using columnsVector = std::vector<std::variant<Column<int>, Column<bool>, Column<std::string>, Column<ByteString>>>;
+            using columnsVariant = std::variant<Column<int>, Column<bool>, Column<std::string>, Column<ByteString>>;
+            columnsVector vector;
 
+            for (std::string cname : requiredColumns) {
+                vector.push_back(findColumnByName(cname));
+            }
 
+            for (int i = 0; i < high; ++i) {
+                std::map<std::string, std::string> columnValues;
+                for (auto &cv : vector) {
+                    switch (cv.index()) {
+                        case C_INT: {
+                            auto &c = std::get<C_INT>(cv);
+                            columnValues[c.name] = toString(c.vector[i]);
+                            break;
+                        }
+                        case C_BOOL: {
+                            auto &c = std::get<C_BOOL>(cv);
+                            columnValues[c.name] = toString(c.vector[i]);
+                            break;
+                        }
+                        case C_STRING: {
+                            auto &c = std::get<C_STRING>(cv);
+                            columnValues[c.name] = toString(c.vector[i]);
+                            break;
+                        }
+                        case C_BYTE: {
+                            auto &c = std::get<C_BYTE>(cv);
+                            columnValues[c.name] = toString(c.vector[i]);
+                            break;
+                        }
+                    }
+                }
+
+                p.setVariables(columnValues);
+
+                auto result = p.parse();
+                if (bool res = std::get<bool>(p.eval(result))) {
+                    if (res) {
+                        columnIndexes.push_back(i);
+                    }
+                } else {
+                    throw ExecutionException("bad returning type of expression\n");
+                }
+            }
+
+            return columnIndexes;
+        }
+
+        int high = 0;
+
+    public:
+        void uploadToFile(std::string &&file) {
+            std::ofstream out;
+            out.open(file, std::ios::app);
+            if (out.is_open()) {
+                out <<  "TABLE  " << this->name << " :\n\n";
+                for (auto &cv : this->columns) {
+                    switch (cv.index()) {
+                        case C_INT: {
+                            auto &c = std::get<C_INT>(cv);
+                            out << "COLUMN " << c.name << " (type int32):\n";
+                            for (auto &i : c.vector) {
+                                out << i << '\n';
+                            }
+                            out << '\n';
+                            break;
+                        }
+                        case C_BOOL: {
+                            auto &c = std::get<C_BOOL>(cv);
+                            out << "COLUMN " << c.name << " (type bool):\n";
+                            for (auto i : c.vector) {
+                                out << i << '\n';
+                            }
+                            out << '\n';
+                            break;
+                        }
+                        case C_STRING: {
+                            auto &c = std::get<C_STRING>(cv);
+                            out << "COLUMN " << c.name << " (type string[" <<c.getLen()<< "]):\n";
+                            for (auto &i : c.vector) {
+                                out << i << '\n';
+                            }
+                            out << '\n';
+                            break;
+                        }
+                        case C_BYTE: {
+                            auto &c = std::get<C_BYTE>(cv);
+                            out << "COLUMN " << c.name << " (type byte[" <<c.getLen()<< "]):\n";
+                            for (auto &i : c.vector) {
+                                out << i.str << '\n';
+                            }
+                            out << '\n';
+                            break;
+                        }
+                    }
+                }
+                out << '\n';
+
+            } else {
+                throw ExecutionException("can not open file" + file + "\n");
+            }
+            out.close();
         }
     };
 
