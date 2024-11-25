@@ -1,5 +1,5 @@
 #include "memdb.hpp"
-#include "parser.hpp"
+#include "parsing/parser.hpp"
 #include <gtest/gtest.h>
 
 using namespace memdb;

@@ -7,6 +7,9 @@
 #include <iostream>
 #include <map>
 #include <fstream>
+#include <set>
+#include <cstring>
+#include "parsing/conditions.hpp"
 
 class ExecutionException : std::exception
 {
@@ -74,6 +77,16 @@ namespace memdb {
             return type;
         }
 
+        Column<T> makeEmptyCopy() {
+            T v1 = value;
+            ColumnAttributes attr1 = attributes;
+            std::string n1 = name;
+            Column<T> column(std::move(n1), std::move(attr1), std::move(v1), len);
+            column.type = type;
+            column.hasDefoltValue = hasDefoltValue;
+            return column;
+        }
+
     private:
         std::string type;
         int len; // for strings and bytes
@@ -105,6 +118,8 @@ namespace memdb {
         C_STRING=2,
         C_BYTE=3
     };
+
+
 
     struct Table {
         std::vector<std::variant<Column<int>, Column<bool>, Column<std::string>, Column<ByteString>>> columns;
@@ -151,6 +166,12 @@ namespace memdb {
             } else {
                 unnamedInsert(line);
             }
+        }
+
+        Table select(std::vector<std::string> &columns_names, std::string &condition) {
+            Table temporary = copyWithEmptyColumns(columns_names);
+
+
         }
 
     private:
@@ -363,7 +384,7 @@ namespace memdb {
                             // ТОП 5 КОСТЫЛЕЙ
                             // 1 место:
 
-                            // Если передается пустое значение с флагом defaulValue,
+                            // Если передается пустое значение с флагом defaultValue,
                             // то раскрывать его нужно по индексу C_INT.
                             // Для этого нужна проверка
                             // val.second.index() == C_INT
@@ -387,7 +408,7 @@ namespace memdb {
                         auto &column = std::get<C_BOOL>(column_var);
                         if (val.second.index() == C_INT && std::get<C_INT>(val.second).defaultValue) {
 
-                            // Если передается пустое значение с флагом defaulValue,
+                            // Если передается пустое значение с флагом defaultValue,
                             // то раскрывать его нужно по индексу C_INT.
                             // Для этого нужна проверка
                             // val.second.index() == C_INT
@@ -411,7 +432,7 @@ namespace memdb {
                         auto &column = std::get<C_STRING>(column_var);
                         if (val.second.index() == C_INT && std::get<C_INT>(val.second).defaultValue) {
 
-                            // Если передается пустое значение с флагом defaulValue,
+                            // Если передается пустое значение с флагом defaultValue,
                             // то раскрывать его нужно по индексу C_INT.
                             // Для этого нужна проверка
                             // val.second.index() == C_INT
@@ -439,7 +460,7 @@ namespace memdb {
                         auto &column = std::get<C_BYTE>(column_var);
                         if (val.second.index() == C_INT && std::get<C_INT>(val.second).defaultValue) {
 
-                            // Если передается пустое значение с флагом defaulValue,
+                            // Если передается пустое значение с флагом defaultValue,
                             // то раскрывать его нужно по индексу C_INT.
                             // Для этого нужна проверка
                             // val.second.index() == C_INT
@@ -470,6 +491,72 @@ namespace memdb {
             }
         }
 
+        Table copyWithEmptyColumns(std::vector<std::string> &columns_names) {
+            using ColumnsVariant = std::variant<Column<int>, Column<bool>, Column<std::string>, Column<ByteString>>;
+            std::vector<ColumnsVariant> new_columns;
+
+            for (auto &_name : columns_names) {
+                auto &column_variant  = findColumnByName(_name);
+                switch (column_variant.index()) {
+                    case C_INT: {
+                        new_columns.push_back(ColumnsVariant(std::get<C_INT>(column_variant).makeEmptyCopy()));
+                        break;
+                    }
+                    case C_BOOL: {
+                        new_columns.push_back(ColumnsVariant(std::get<C_BOOL>(column_variant).makeEmptyCopy()));
+                        break;
+                    }
+                    case C_STRING: {
+                        new_columns.push_back(ColumnsVariant(std::get<C_STRING>(column_variant).makeEmptyCopy()));
+                        break;
+                    }
+                    case C_BYTE: {
+                        new_columns.push_back(ColumnsVariant(std::get<C_BYTE>(column_variant).makeEmptyCopy()));
+                        break;
+                    }
+                }
+            }
+
+            return Table("temporery", std::move(new_columns));
+        }
+
+        std::variant<Column<int>, Column<bool>, Column<std::string>, Column<ByteString>> &findColumnByName(std::string &_name) {
+            for (auto &c : columns) {
+                switch (c.index()) {
+                    case C_INT: {
+                        if (std::get<C_INT>(c).name == _name) {
+                            return c;
+                        }
+                        break;
+                    }
+                    case C_BOOL : {
+                        if (std::get<C_BOOL>(c).name == _name) {
+                            return c;
+                        }
+                        break;
+                    }
+                    case C_STRING: {
+                        if (std::get<C_STRING>(c).name == _name) {
+                            return c;
+                        }
+                        break;
+                    }
+                    case C_BYTE: {
+                        if (std::get<C_INT>(c).name == _name) {
+                            return c;
+                        }
+                        break;
+                    }
+                }
+            }
+            throw ExecutionException("can not find column with name " + _name + "\n");
+        };
+
+        std::vector<int> rowNumbersByCondetion(std::string &condition) {
+
+
+
+        }
     };
 
     struct Database {
