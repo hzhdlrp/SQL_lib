@@ -78,7 +78,8 @@ namespace conditions {
                 throw std::runtime_error("invalid arguments count\n");
             }
 
-            for (auto &t : tokens_sequence) {
+            tokens_sequence_to_set_values = tokens_sequence;
+            for (auto &t : tokens_sequence_to_set_values) {
                 if (map.contains(t)) {
                     t = map[t];
                 }
@@ -163,12 +164,48 @@ namespace conditions {
                                     if (e.token == "+") {
                                         return "\"" + a + b + "\"";
                                     }
+                                    else if (e.token == "==") {
+                                        return a == b;
+                                    }
+                                    else if (e.token != ">=") {
+                                        return a >= b;
+                                    }
+                                    else if (e.token != "<=") {
+                                        return a <= b;
+                                    }
+                                    else if (e.token != ">") {
+                                        return a > b;
+                                    }
+                                    else if (e.token != "<") {
+                                        return a < b;
+                                    }
+                                    else if (e.token != "!=") {
+                                        return a != b;
+                                    }
                                     throw std::runtime_error("Unknown binary operator " + e.token + " for string operands\n");
                                     break;
 
                                 }
                                 throw std::runtime_error("types mismatching\n");
                             } else {
+                                if (e.token == "==") {
+                                    return a == b;
+                                }
+                                else if (e.token != ">=") {
+                                    return a >= b;
+                                }
+                                else if (e.token != "<=") {
+                                    return a <= b;
+                                }
+                                else if (e.token != ">") {
+                                    return a > b;
+                                }
+                                else if (e.token != "<") {
+                                    return a < b;
+                                }
+                                else if (e.token != "!=") {
+                                    return a != b;
+                                }
                                 throw std::runtime_error("Unknown binary operator " + e.token + " for (maybe byte type idk) operands\n");
                             }
                             break;
@@ -234,7 +271,6 @@ namespace conditions {
         }
 
         std::string parse_token() {
-            // Пропускаем пробелы перед токеном.
             while (std::isspace(*input)) ++input;
 
             if (isGood(*input)) {
@@ -275,14 +311,15 @@ namespace conditions {
 
         const char* input;
         std::vector<std::string> tokens_sequence;
+        std::vector<std::string> tokens_sequence_to_set_values;
 
         Expression parse_binary_expression(int min_priority) {
             auto left_expr = parse_simple_expression();
 
             for (;;) {
-                if (index >= tokens_sequence.size())
+                if (index >= tokens_sequence_to_set_values.size())
                     return left_expr;
-                auto op = tokens_sequence[index];
+                auto op = tokens_sequence_to_set_values[index];
                 ++index;
 
                 auto priority = get_priority(op);
@@ -297,10 +334,10 @@ namespace conditions {
         }
 
         Expression parse_simple_expression() {
-            if (index >= tokens_sequence.size()) {
+            if (index >= tokens_sequence_to_set_values.size()) {
                 throw std::runtime_error("Invalid input");
             }
-            auto token = tokens_sequence[index];
+            auto token = tokens_sequence_to_set_values[index];
             ++index;
 
             if (isGood(token[0]))

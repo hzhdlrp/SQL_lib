@@ -10,6 +10,7 @@
 #include <set>
 #include <cstring>
 #include <sstream>
+#include <algorithm>
 #include "parsing/conditions.hpp"
 
 class ExecutionException : std::exception
@@ -172,6 +173,7 @@ namespace memdb {
 
         Table select(std::vector<std::string> &columns_names, std::string &condition) {
             Table temporary = copyWithEmptyColumns(columns_names);
+//            std::cerr << temporary.getColumnsCount() << "\n";
             auto indexes = rowNumbersByCondition(condition);
 
             for (std::string &str : columns_names) {
@@ -209,6 +211,42 @@ namespace memdb {
             return temporary;
         }
 
+        void del(std::string &condition) {
+            auto indexes = rowNumbersByCondition(condition);
+            std::sort(indexes.begin(), indexes.begin(), std::greater());
+            for (auto &cv : columns) {
+                switch (cv.index()) {
+                    case C_INT: {
+                        auto &c = std::get<C_INT>(cv);
+                        for (int i : indexes) {
+                            c.vector.erase(c.vector.begin() + i );
+                        }
+                        break;
+                    }
+                    case C_BOOL: {
+                        auto &c = std::get<C_BOOL>(cv);
+                        for (int i : indexes) {
+                            c.vector.erase(c.vector.begin() + i );
+                        }
+                        break;
+                    }
+                    case C_STRING: {
+                        auto &c = std::get<C_STRING>(cv);
+                        for (int i : indexes) {
+                            c.vector.erase(c.vector.begin() + i);
+                        }
+                        break;
+                    }
+                    case C_BYTE: {
+                        auto &c = std::get<C_BYTE>(cv);
+                        for (int i : indexes) {
+                            c.vector.erase(c.vector.begin() + i);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
     private:
         std::string toString(int a) {
             std::stringstream ss("");
@@ -216,7 +254,9 @@ namespace memdb {
             return ss.str();
         }
         std::string toString(std::string a) {
-            return a;
+            std::stringstream ss("");
+            ss << "\"" << a << "\"";
+            return ss.str();
         }
         std::string toString(bool a) {
             std::string s = a ? "true" : "false";
@@ -258,6 +298,13 @@ namespace memdb {
 
                                     column.vector.push_back(column.value);
                                 } else {
+                                    if (column.attributes.unique) {
+                                        for (auto &v : column.vector) {
+                                            if (v == std::get<C_INT>(val.second).value) {
+                                                throw ExecutionException("not unique value\n");
+                                            }
+                                        }
+                                    }
                                     column.vector.push_back(std::get<C_INT>(val.second).value);
                                 }
 
@@ -282,6 +329,13 @@ namespace memdb {
 
                                     column.vector.push_back(column.value);
                                 } else {
+                                    if (column.attributes.unique) {
+                                        for (const auto &v : column.vector) {
+                                            if (v == std::get<C_BOOL>(val.second).value) {
+                                                throw ExecutionException("not unique value\n");
+                                            }
+                                        }
+                                    }
                                     column.vector.push_back(std::get<C_BOOL>(val.second).value);
                                 }
 
@@ -309,6 +363,13 @@ namespace memdb {
                                     if (std::get<C_STRING>(val.second).value.size() > column.getLen()) {
                                         throw ExecutionException("inserting too long string in column " + val.first + "\n");
                                     }
+                                    if (column.attributes.unique) {
+                                        for (const auto &v : column.vector) {
+                                            if (v == std::get<C_STRING>(val.second).value) {
+                                                throw ExecutionException("not unique value\n");
+                                            }
+                                        }
+                                    }
                                     column.vector.push_back(std::get<C_STRING>(val.second).value);
                                 }
 
@@ -335,6 +396,13 @@ namespace memdb {
                                 } else {
                                     if (std::get<C_BYTE>(val.second).value.str.size() != column.getLen()) {
                                         throw ExecutionException("invalid byte array lenght inserting in column " + val.first + "\n");
+                                    }
+                                    if (column.attributes.unique) {
+                                        for (const auto &v : column.vector) {
+                                            if (v.str == std::get<C_BYTE>(val.second).value.str) {
+                                                throw ExecutionException("not unique value\n");
+                                            }
+                                        }
                                     }
                                     column.vector.push_back(std::get<C_BYTE>(val.second).value);
                                 }
@@ -450,7 +518,13 @@ namespace memdb {
                             if (typeid(std::get<C_INT>(val.second).value) != typeid(int)) {
                                 throw ExecutionException("invalid type inserting in column " + column.name + "\n");
                             }
-
+                            if (column.attributes.unique) {
+                                for (const auto &v : column.vector) {
+                                    if (v == std::get<C_INT>(val.second).value) {
+                                        throw ExecutionException("not unique value\n");
+                                    }
+                                }
+                            }
                             column.vector.push_back(std::get<C_INT>(val.second).value);
                         }
                         break;
@@ -474,7 +548,13 @@ namespace memdb {
                             if (typeid(std::get<C_BOOL>(val.second).value) != typeid(bool)) {
                                 throw ExecutionException("invalid type inserting in column " + column.name + "\n");
                             }
-
+                            if (column.attributes.unique) {
+                                for (const auto &v : column.vector) {
+                                    if (v == std::get<C_BOOL>(val.second).value) {
+                                        throw ExecutionException("not unique value\n");
+                                    }
+                                }
+                            }
                             column.vector.push_back(std::get<C_BOOL>(val.second).value);
                         }
                         break;
@@ -502,7 +582,13 @@ namespace memdb {
                             if (std::get<C_STRING>(val.second).value.size() > column.getLen()) {
                                 throw ExecutionException("trying to insert too long string to column " + column.name + "\n");
                             }
-
+                            if (column.attributes.unique) {
+                                for (const auto &v : column.vector) {
+                                    if (v == std::get<C_STRING>(val.second).value) {
+                                        throw ExecutionException("not unique value\n");
+                                    }
+                                }
+                            }
                             column.vector.push_back(std::get<C_STRING>(val.second).value);
                         }
                         break;
@@ -530,7 +616,13 @@ namespace memdb {
                             if (std::get<C_BYTE>(val.second).value.str.size() != column.getLen()) {
                                 throw ExecutionException("trying to insert byte array with invalid lenght to column " + column.name + "\n");
                             }
-
+                            if (column.attributes.unique) {
+                                for (const auto &v : column.vector) {
+                                    if (v.str == std::get<C_BYTE>(val.second).value.str) {
+                                        throw ExecutionException("not unique value\n");
+                                    }
+                                }
+                            }
                             column.vector.push_back(std::get<C_BYTE>(val.second).value);
                         }
                         break;
@@ -658,14 +750,12 @@ namespace memdb {
                     exit(-1);
                 }
                 try {
-                    if (bool res = std::get<bool>(p.eval(result))) {
-                        p.reset();
-                        if (res) {
-                            columnIndexes.push_back(i);
-                        }
-                    } else {
-                        throw ExecutionException("bad returning type of expression\n");
+                    bool res = std::get<bool>(p.eval(result));
+                    p.reset();
+                    if (res) {
+                        columnIndexes.push_back(i);
                     }
+
                 } catch (const std::runtime_error &e) {
                     std::cerr << "Произошла ошибка: " << e.what() << std::endl;
                 }

@@ -57,6 +57,22 @@ public:
     }
 };
 
+class Delete : public Query {
+    std::string table_name;
+    std::string condition;
+
+public:
+    Delete(std::string &tn, std::string &cnd) : table_name(tn), condition(cnd) {}
+    std::variant<memdb::Table, std::monostate> execute(memdb::Database &db) override {
+        for (auto &t : db.tables) {
+            if (t.name == table_name) {
+                t.del(condition);
+            }
+        }
+        return std::monostate{};
+    }
+};
+
 std::variant<memdb::Table, std::monostate> execute(memdb::Database &db, const std::shared_ptr<Query>& q) {
     return q->execute(db);
 }
@@ -97,8 +113,29 @@ struct Parser {
             remained.erase(start, command_name.size());
             return selectQueryParse(remained);
         }
+
+        else if (command_name == "delete") {
+            std::string remained = ss.str();
+
+            size_t start {remained.find(command_name)};
+            remained.erase(start, command_name.size());
+            return deleteQueryParse(remained);
+        }
     }
 private:
+    std::shared_ptr<Query> deleteQueryParse(std::string &remained) {
+        std::string table_name;
+        std::string conditions;
+        for (std::smatch sm; regex_search(remained, sm, std::regex("where"));) {
+            table_name = sm.prefix();
+            conditions = sm.suffix();
+            break;
+        }
+        table_name.erase(std::remove(table_name.begin(), table_name.end(), ' '), table_name.end());
+        conditions.erase(std::remove(conditions.begin(), conditions.end(), ' '), conditions.end());
+        return std::make_shared<Delete>(Delete(table_name, conditions));
+    }
+
     std::shared_ptr<Query> insertQueryParse(std::string &remained) {
         std::regex r(R"(\(([^()]+)\))");
         std::string in_braces;
@@ -272,6 +309,7 @@ private:
             columns_names.push_back(sm.prefix());
             columns_list = sm.suffix();
         }
+        columns_names.push_back(columns_list);
 
         for (auto &s: columns_names) {
             s.erase(std::remove(s.begin(), s.end(), ' '), s.end());
