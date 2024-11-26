@@ -210,11 +210,17 @@ namespace memdb {
         }
 
     private:
-        template <typename T>
-        std::string toString(T a) {
+        std::string toString(int a) {
             std::stringstream ss("");
             ss << a;
             return ss.str();
+        }
+        std::string toString(std::string a) {
+            return a;
+        }
+        std::string toString(bool a) {
+            std::string s = a ? "true" : "false";
+            return s;
         }
         std::string toString(ByteString a) {
             return a.str;
@@ -644,13 +650,24 @@ namespace memdb {
 
                 p.setVariables(columnValues);
 
-                auto result = p.parse();
-                if (bool res = std::get<bool>(p.eval(result))) {
-                    if (res) {
-                        columnIndexes.push_back(i);
+                conditions::Expression result;
+                try {
+                    result = p.parse();
+                } catch (const std::runtime_error &e) {
+                    std::cerr << "Произошла ошибка: " << e.what() << std::endl;
+                    exit(-1);
+                }
+                try {
+                    if (bool res = std::get<bool>(p.eval(result))) {
+                        p.reset();
+                        if (res) {
+                            columnIndexes.push_back(i);
+                        }
+                    } else {
+                        throw ExecutionException("bad returning type of expression\n");
                     }
-                } else {
-                    throw ExecutionException("bad returning type of expression\n");
+                } catch (const std::runtime_error &e) {
+                    std::cerr << "Произошла ошибка: " << e.what() << std::endl;
                 }
             }
 

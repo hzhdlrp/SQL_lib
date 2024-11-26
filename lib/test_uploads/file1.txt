@@ -1,0 +1,7 @@
+TABLE  temporery :
+
+COLUMN id (type int32):
+5
+5
+
+

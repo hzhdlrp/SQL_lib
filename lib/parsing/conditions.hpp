@@ -38,6 +38,7 @@ namespace conditions {
     }
 
     struct Expression {
+        Expression() {}
         Expression(std::string token) : token(token) {}
         Expression(std::string token, Expression a) : token(token), args{a} {}
         Expression(std::string token, Expression a, Expression b) : token(token), args{a, b} {}
@@ -56,18 +57,12 @@ namespace conditions {
         if (token == "/") return 5;
         if (token == "%") return 5;
         if (token == "!") return 6;
-        return 0; // Возвращаем 0 если токен - это не бинарная операция (например ")")
+        return 0;
     }
 
     class Parser {
-
-        // !!!_ALERT_!!!
-        // частично скопипастил отсюда
-        // https://ru.stackoverflow.com/questions/23842
-        // но внес очень значительные изменения в логику работы
-
     public:
-        explicit Parser(const char* input) : input(input) {} // Конструктор, принимает строку с выражением
+        explicit Parser(const char* input) : input(input) {}
         Expression parse() {
             return parse_binary_expression(0);
         }
@@ -91,14 +86,13 @@ namespace conditions {
         }
 
         std::variant<int32_t, bool, std::string> eval(const Expression& e) {
-            // на самом деле байтовая последовательность в таблице тоже хранится как строка
 
             switch (e.args.size()) {
                 case 2: {
                     auto a_v = eval(e.args[0]);
                     auto b_v = eval(e.args[1]);
                     if (a_v.index() != b_v.index())
-                        throw std::runtime_error("types mismatching\n");
+                        throw std::runtime_error("types mismatching, operation " + e.token + " \n");
                     switch (a_v.index()) {
                         case INT :{
                             auto &a = std::get<INT>(a_v);
@@ -165,8 +159,6 @@ namespace conditions {
                                         b.erase(bstart, 1);
                                         bstart = b.find("\"", bstart + 1);
                                     }
-//                                    a.erase(std::remove(a.begin(), a.end(), '\"'), a.end());
-//                                    b.erase(std::remove(b.begin(), b.end(), '\"'), b.end());
 
                                     if (e.token == "+") {
                                         return "\"" + a + b + "\"";
@@ -221,6 +213,9 @@ namespace conditions {
 
             throw std::runtime_error("Unknown expression type");
         }
+        void reset() {
+            index = 0;
+        }
     private:
         int index = 0;
 
@@ -248,9 +243,8 @@ namespace conditions {
                 return token;
             }
 
-            // Список всех известных токенов - операции и скобки.
             static const std::string tokens[] =
-                    { "+", "-", "*", "/", "%",  "|", "&&", "||", "^^", "(", ")", "==", "!=", ">", "<", ">=", "<=" };
+                    { "+", "-", "*", "/", "%", "&&", "||", "^^", "(", ")", "==", "!=", ">", "<", ">=", "<=",  "|" };
             bool absIsOpened = false;
             for (auto& t : tokens) {
                 if (std::strncmp(input, t.c_str(), t.size()) == 0) {
@@ -268,7 +262,7 @@ namespace conditions {
                 }
             }
 
-            return ""; // Какой-то неизвестный токен, или символ '\0' - конец строки.
+            return "";
         }
 
         void make_tokens_sequence() {
@@ -287,20 +281,19 @@ namespace conditions {
 
             for (;;) {
                 if (index >= tokens_sequence.size())
-                    throw std::runtime_error("Invalid input");
-                auto op = tokens_sequence[index]; // Пробуем парсить бинарную операцию.
+                    return left_expr;
+                auto op = tokens_sequence[index];
                 ++index;
 
                 auto priority = get_priority(op);
-                // Выходим из цикла если ее приоритет слишком низок (или это не бинарная операция).
                 if (priority <= min_priority) {
-                    input -= op.size(); // Отдаем токен обратно,
-                    return left_expr; // возвращаем выражение слева.
+                    input -= op.size();
+                    return left_expr;
                 }
 
                 auto right_expr = parse_binary_expression(priority);
-                left_expr = Expression(op, left_expr, right_expr); // Обновляем выражение слева.
-            } // Повторяем цикл: парсинг операции, и проверка ее приоритета.
+                left_expr = Expression(op, left_expr, right_expr);
+            }
         }
 
         Expression parse_simple_expression() {
@@ -317,7 +310,7 @@ namespace conditions {
                 auto result = parse();
                 if (index >= tokens_sequence.size() || tokens_sequence[index] != ")") throw std::runtime_error("Expected ')'");
                 ++index;
-                return result; // Если это скобки, парсим и возвращаем выражение в скобках
+                return result;
             }
 
             if (token == "|o") {
@@ -327,8 +320,8 @@ namespace conditions {
                 return result;
             }
 
-            // Иначе, это унарная операция
-            auto arg = parse_simple_expression(); // Парсим ее аргумент.
+
+            auto arg = parse_simple_expression();
             return Expression(token, arg);
         }
 
