@@ -246,6 +246,13 @@ namespace memdb {
                     }
                 }
             }
+            --high;
+        }
+
+        void update(std::string &column_name, std::string &column_value_to_evaluate, std::string &condition) {
+            auto &cv = findColumnByName(column_name);
+            auto indexes = rowNumbersByCondition(condition);
+            setValuesByIndexes(cv, indexes, condition, column_value_to_evaluate);
         }
     private:
         std::string toString(int a) {
@@ -762,6 +769,142 @@ namespace memdb {
             }
 
             return columnIndexes;
+        }
+
+        void setValuesByIndexes(std::variant<Column<int>, Column<bool>, Column<std::string>, Column<ByteString>> &column_to_change_var, std::vector<int> &indexes, std::string &condition, std::string &expression) {
+            char condition_arr[condition.size() + 1];
+            for (int i = 0; i < condition.size(); ++i) {
+                condition_arr[i] = condition[i];
+            }
+            condition_arr[condition.size()] = '\0';
+            conditions::Parser p(condition_arr);
+
+            std::set<std::string> requiredColumns = p.getVariablesNames();
+            using columnsVector = std::vector<std::variant<Column<int>, Column<bool>, Column<std::string>, Column<ByteString>>>;
+            using columnsVariant = std::variant<Column<int>, Column<bool>, Column<std::string>, Column<ByteString>>;
+            columnsVector vector;
+
+            for (std::string cname : requiredColumns) {
+                vector.push_back(findColumnByName(cname));
+            }
+
+            for (int i = 0; i < high; ++i) {
+                std::map<std::string, std::string> columnValues;
+                for (auto &cv: vector) {
+                    switch (cv.index()) {
+                        case C_INT: {
+                            auto &c = std::get<C_INT>(cv);
+                            columnValues[c.name] = toString(c.vector[i]);
+                            break;
+                        }
+                        case C_BOOL: {
+                            auto &c = std::get<C_BOOL>(cv);
+                            columnValues[c.name] = toString(c.vector[i]);
+                            break;
+                        }
+                        case C_STRING: {
+                            auto &c = std::get<C_STRING>(cv);
+                            columnValues[c.name] = toString(c.vector[i]);
+                            break;
+                        }
+                        case C_BYTE: {
+                            auto &c = std::get<C_BYTE>(cv);
+                            columnValues[c.name] = toString(c.vector[i]);
+                            break;
+                        }
+                    }
+                }
+
+                p.setVariables(columnValues);
+
+                conditions::Expression result;
+                try {
+                    result = p.parse();
+                } catch (const std::runtime_error &e) {
+                    std::cerr << "Произошла ошибка: " << e.what() << std::endl;
+                    exit(-1);
+                }
+                try {
+
+                    bool res = std::get<bool>(p.eval(result));
+                    p.reset();
+                    if (res) {
+                        char expression_arr[expression.size() + 1];
+                        for (int j = 0; j < expression.size(); ++j) {
+                            expression_arr[j] = expression[j];
+                        }
+                        expression_arr[expression.size()] = '\0';
+                        conditions::Parser p1(expression_arr);
+
+                        std::set<std::string> requiredColumns1 = p1.getVariablesNames();
+                        columnsVector vector1;
+
+                        for (std::string cname : requiredColumns1) {
+                            vector1.push_back(findColumnByName(cname));
+                        }
+
+                        std::map<std::string, std::string> columnValues1;
+                        for (auto &cv: vector1) {
+                            switch (cv.index()) {
+                                case C_INT: {
+                                    auto &c = std::get<C_INT>(cv);
+                                    columnValues1[c.name] = toString(c.vector[i]);
+                                    break;
+                                }
+                                case C_BOOL: {
+                                    auto &c = std::get<C_BOOL>(cv);
+                                    columnValues1[c.name] = toString(c.vector[i]);
+                                    break;
+                                }
+                                case C_STRING: {
+                                    auto &c = std::get<C_STRING>(cv);
+                                    columnValues1[c.name] = toString(c.vector[i]);
+                                    break;
+                                }
+                                case C_BYTE: {
+                                    auto &c = std::get<C_BYTE>(cv);
+                                    columnValues1[c.name] = toString(c.vector[i]);
+                                    break;
+                                }
+                            }
+                        }
+
+                        p1.setVariables(columnValues1);
+
+                        conditions::Expression result1;
+                        try {
+                            result = p1.parse();
+                        } catch (const std::runtime_error &e) {
+                            std::cerr << "Произошла ошибка: " << e.what() << std::endl;
+                            exit(-1);
+                        }
+
+                        switch (column_to_change_var.index()) {
+                            case C_INT: {
+                                std::get<C_INT>(column_to_change_var).vector[i] = std::get<int>(p.eval(result));
+                                break;
+                            }
+                            case C_BOOL: {
+                                std::get<C_BOOL>(column_to_change_var).vector[i] = std::get<bool>(p.eval(result));
+                                break;
+                            }
+                            case C_STRING: {
+                                std::get<C_STRING>(column_to_change_var).vector[i] = std::get<std::string>(p.eval(result));
+                                break;
+                            }
+                            case C_BYTE: {
+                                std::get<C_BYTE>(column_to_change_var).vector[i] = ByteString(std::get<std::string>(p.eval(result)));
+                                break;
+                            }
+                        }
+                        p.reset();
+                    }
+
+                } catch (const std::runtime_error &e) {
+                    std::cerr << "Произошла ошибка: " << e.what() << std::endl;
+                }
+
+            }
         }
 
         int high = 0;

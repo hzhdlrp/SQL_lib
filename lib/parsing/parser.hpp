@@ -73,6 +73,24 @@ public:
     }
 };
 
+class Update : public Query {
+    std::string table_name;
+    std::string column_name;
+    std::string column_value_to_evaluate;
+    std::string condition;
+
+public:
+    Update(std::string &tn, std::string &cn, std::string &cv, std::string &cndt) : table_name(tn), column_name(cn), column_value_to_evaluate(cv), condition(cndt) {}
+    std::variant<memdb::Table, std::monostate> execute(memdb::Database &db) override {
+        for (auto &t : db.tables) {
+            if (t.name == table_name) {
+                t.update(column_name, column_value_to_evaluate, condition);
+            }
+        }
+        return std::monostate{};
+    }
+};
+
 std::variant<memdb::Table, std::monostate> execute(memdb::Database &db, const std::shared_ptr<Query>& q) {
     return q->execute(db);
 }
@@ -121,8 +139,44 @@ struct Parser {
             remained.erase(start, command_name.size());
             return deleteQueryParse(remained);
         }
+
+        else if (command_name == "update") {
+            std::string remained = ss.str();
+
+            size_t start {remained.find(command_name)};
+            remained.erase(start, command_name.size());
+            return updateQueryParse(remained);
+        }
     }
 private:
+    std::shared_ptr<Query> updateQueryParse(std::string &remained) {
+        std::string table_name;
+        std::string column_name;
+        std::string column_value_to_evaluate;
+        std::string conditions;
+
+        for (std::smatch sm; regex_search(remained, sm, std::regex("set"));) {
+            table_name = sm.prefix();
+            remained = sm.suffix();
+            break;
+        }
+        for (std::smatch sm; regex_search(remained, sm, std::regex("="));) {
+            column_name = sm.prefix();
+            remained = sm.suffix();
+            break;
+        }
+        for (std::smatch sm; regex_search(remained, sm, std::regex("where"));) {
+            column_value_to_evaluate = sm.prefix();
+            conditions = sm.suffix();
+            break;
+        }
+        table_name.erase(std::remove(table_name.begin(), table_name.end(), ' '), table_name.end());
+        conditions.erase(std::remove(conditions.begin(), conditions.end(), ' '), conditions.end());
+        column_name.erase(std::remove(column_name.begin(), column_name.end(), ' '), column_name.end());
+        column_value_to_evaluate.erase(std::remove(column_value_to_evaluate.begin(), column_value_to_evaluate.end(), ' '), column_value_to_evaluate.end());
+
+        return std::make_shared<Update>(table_name, column_name, column_value_to_evaluate, conditions);
+    }
     std::shared_ptr<Query> deleteQueryParse(std::string &remained) {
         std::string table_name;
         std::string conditions;

@@ -261,7 +261,9 @@ namespace conditions {
         void makeVariablesSet() {
             for (auto &t : tokens_sequence) {
                 if (isWord(t)) {
-                    variables.insert(t);
+                    if (t != "true" && t != "false") {
+                        variables.insert(t);
+                    }
                 }
             }
         }
